@@ -4,8 +4,8 @@ export default function SOSButton() {
     let location = "Ubicación no disponible";
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((pos) => {
-        location = \`https://maps.google.com/?q=\${pos.coords.latitude},\${pos.coords.longitude}\`;
-        const msg = \`🚨 Estoy en riesgo, envíen ayuda. Ubicación: \${location}\`;
+        location = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+        const msg = `🚨 Estoy en riesgo, envíen ayuda. Ubicación: ${location}`;
         navigator.clipboard.writeText(msg);
         alert("✅ Mensaje SOS copiado al portapapeles. ¡Pégalo en WhatsApp o SMS!");
       });
