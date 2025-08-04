@@ -10,7 +10,7 @@ export default function ScenarioCard({ scenario }) {
       <ul className="mt-2 list-disc list-inside text-neonCyan">
         {scenario.steps.map((step, i) => <li key={i}>{step}</li>)}
       </ul>
-      <button 
+      <button
         className="mt-3 px-3 py-2 bg-neonPurple text-white rounded-lg"
         onClick={() => setShowLegal(!showLegal)}
       >
