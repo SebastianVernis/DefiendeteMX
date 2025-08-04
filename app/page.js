@@ -1,4 +1,4 @@
-\"use client\";
+"use client";
 import { useState } from "react";
 import { scenarios } from "./data/scenarios";
 import ScenarioCard from "./components/ScenarioCard";
