@@ -1,10 +1,12 @@
 import SOSButton from "./components/SOSButton";
+import './globals.css';
+
 
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body className="bg-darkBg text-white font-sans">
-        <div className="container mx-auto p-4">{children}</div>
+      <body className="bg-background text-textPrimary font-sans">
+        {children}
         <SOSButton />
       </body>
     </html>
