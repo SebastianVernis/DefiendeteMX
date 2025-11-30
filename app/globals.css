@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 @layer base {
   html {
-    @apply antialiased;
+    @apply antialiased scroll-smooth;
   }
   
   body {
@@ -14,16 +14,32 @@
   }
 }
 
-@layer components {
-  .btn-primary {
-    @apply px-6 py-3 bg-accent hover:bg-accentHover text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
   }
   
-  .btn-secondary {
-    @apply px-6 py-3 bg-white hover:bg-secondary text-accent font-semibold rounded-lg border-2 border-accent transition-all duration-200;
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out;
   }
-  
-  .card {
-    @apply bg-primary rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-border;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
