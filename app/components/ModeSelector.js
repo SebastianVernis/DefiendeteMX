@@ -25,57 +25,66 @@ export default function ModeSelector({ mode, setMode }) {
   ];
 
   return (
-    <div className="mb-16">
-      <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold text-textPrimary mb-2">
+    <div className="mb-20">
+      <div className="text-center mb-12">
+        <div className="inline-block bg-gradient-to-r from-accent to-accentLight p-1 rounded-full mb-6">
+          <div className="bg-white rounded-full px-6 py-2">
+            <span className="text-sm font-bold text-accent">TU ROL</span>
+          </div>
+        </div>
+        <h3 className="font-display text-3xl font-bold text-textPrimary mb-4">
           Selecciona tu situación
         </h3>
-        <p className="text-textSecondary">
+        <p className="text-lg text-textSecondary max-w-xl mx-auto">
           La información se adaptará según tu rol
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
         {modes.map((m) => (
           <button
             key={m.id}
             onClick={() => setMode(m.id)}
-            className={`group relative p-8 rounded-2xl font-semibold transition-all duration-300 text-left overflow-hidden ${
+            className={`group relative p-10 rounded-3xl font-semibold transition-all duration-300 text-left overflow-hidden border-2 ${
               mode === m.id
-                ? "bg-accent text-white shadow-elegant-xl scale-[1.02] border-2 border-accent"
-                : "bg-white hover:bg-secondary/50 text-textPrimary shadow-elegant hover:shadow-elegant-lg border-2 border-border hover:border-accent/20"
+                ? "bg-gradient-to-br from-accent to-accentLight text-white shadow-2xl scale-[1.02] border-accent"
+                : "bg-gradient-to-br from-white to-secondary/30 hover:from-white hover:to-white text-textPrimary shadow-xl hover:shadow-2xl hover:border-accent/30 border-border"
             }`}
           >
             {/* Background decoration */}
-            <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl transition-opacity duration-300 ${
-              mode === m.id ? "opacity-20" : "opacity-0 group-hover:opacity-10"
+            <div className={`absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl transition-opacity duration-500 ${
+              mode === m.id ? "opacity-30" : "opacity-0 group-hover:opacity-20"
             } ${mode === m.id ? "bg-white" : "bg-accent"}`}></div>
 
-            <div className="relative">
+            <div className="relative z-10">
               {/* Icon */}
-              <div className={`mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 ${
-                mode === m.id 
-                  ? "bg-white/20 text-white" 
-                  : "bg-accent/5 text-accent group-hover:bg-accent/10 group-hover:scale-110"
+              <div className={`mb-6 inline-flex items-center justify-center w-20 h-20 rounded-2xl transition-all duration-500 ${
+                mode === m.id
+                  ? "bg-white/20 text-white"
+                  : "bg-gradient-to-br from-accent/10 to-accentLight/10 text-accent group-hover:scale-110 group-hover:shadow-lg"
               }`}>
                 {m.icon}
               </div>
 
               {/* Content */}
               <div>
-                <div className={`font-bold text-xl mb-2 ${mode === m.id ? "text-white" : "text-textPrimary"}`}>
+                <div className={`font-bold text-2xl mb-3 transition-colors duration-300 ${
+                  mode === m.id ? "text-white" : "text-textPrimary"
+                }`}>
                   {m.label}
                 </div>
-                <div className={`text-sm leading-relaxed ${mode === m.id ? "text-white/90" : "text-textSecondary"}`}>
+                <div className={`text-lg leading-relaxed transition-colors duration-300 ${
+                  mode === m.id ? "text-white/90" : "text-textSecondary"
+                }`}>
                   {m.description}
                 </div>
               </div>
 
               {/* Check indicator */}
               {mode === m.id && (
-                <div className="absolute top-0 right-0">
-                  <div className="bg-white text-accent w-8 h-8 rounded-full flex items-center justify-center shadow-elegant">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <div className="absolute top-5 right-5">
+                  <div className="bg-white text-accent w-12 h-12 rounded-full flex items-center justify-center shadow-2xl">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
