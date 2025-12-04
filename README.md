@@ -2,6 +2,12 @@
 
 Aplicación interactiva desarrollada con **Next.js 14** y **Tailwind CSS**, diseñada para brindar **información legal inmediata** en casos de detenciones, abusos policiales y situaciones de emergencia en México.
 
+## 🌐 Live Demo
+
+**Production:** https://defiendete-mx.pages.dev
+
+Deployed on Cloudflare Pages with automatic HTTPS and global CDN.
+
 ## 📌 Descripción
 Defiéndete MX es una PWA que permite:
 - Consultar protocolos legales en diferentes escenarios de detención.
