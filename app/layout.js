@@ -1,5 +1,6 @@
 import './globals.css';
 import { AuthProvider } from './contexts/AuthContext';
+import ChatWidget from './components/chat/ChatWidget';
 
 /**
  * Root Layout Component
@@ -105,6 +106,9 @@ export default function RootLayout({ children }) {
           {/* Portal for Modals and Overlays */}
           <div id="modal-root"></div>
           <div id="toast-root"></div>
+
+          {/* AI Chat Widget */}
+          <ChatWidget />
         </AuthProvider>
       </body>
     </html>
