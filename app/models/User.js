@@ -90,6 +90,24 @@ const UserSchema = new mongoose.Schema({
   resetPasswordToken: String,
   resetPasswordExpires: Date,
   
+  // Refresh Tokens
+  refreshTokens: [{
+    token: {
+      type: String,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    expiresAt: {
+      type: Date,
+      required: true
+    },
+    userAgent: String,
+    ipAddress: String
+  }],
+  
   // User Role
   role: {
     type: String,
@@ -225,6 +243,66 @@ UserSchema.methods.softDelete = function() {
   this.deletedAt = new Date();
   this.isActive = false;
   return this.save();
+};
+
+// Add refresh token
+UserSchema.methods.addRefreshToken = async function(token, expiresAt, userAgent, ipAddress) {
+  // Remove expired tokens
+  this.refreshTokens = this.refreshTokens.filter(rt => rt.expiresAt > new Date());
+  
+  // Limit to 5 active refresh tokens per user
+  if (this.refreshTokens.length >= 5) {
+    this.refreshTokens.shift(); // Remove oldest token
+  }
+  
+  this.refreshTokens.push({
+    token,
+    expiresAt,
+    userAgent,
+    ipAddress
+  });
+  
+  return this.save();
+};
+
+// Remove refresh token
+UserSchema.methods.removeRefreshToken = async function(token) {
+  this.refreshTokens = this.refreshTokens.filter(rt => rt.token !== token);
+  return this.save();
+};
+
+// Remove all refresh tokens (logout from all devices)
+UserSchema.methods.removeAllRefreshTokens = async function() {
+  this.refreshTokens = [];
+  return this.save();
+};
+
+// Check if refresh token is valid
+UserSchema.methods.hasValidRefreshToken = function(token) {
+  const refreshToken = this.refreshTokens.find(rt => rt.token === token);
+  
+  if (!refreshToken) {
+    return false;
+  }
+  
+  // Check if token is expired
+  if (refreshToken.expiresAt < new Date()) {
+    return false;
+  }
+  
+  return true;
+};
+
+// Clean expired refresh tokens
+UserSchema.methods.cleanExpiredRefreshTokens = async function() {
+  const originalLength = this.refreshTokens.length;
+  this.refreshTokens = this.refreshTokens.filter(rt => rt.expiresAt > new Date());
+  
+  if (this.refreshTokens.length !== originalLength) {
+    return this.save();
+  }
+  
+  return this;
 };
 
 // Export model
