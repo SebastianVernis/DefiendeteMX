@@ -1,116 +1,135 @@
-"use client";
-import { useEffect, useState } from "react";
+'use client';
 
+import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+
+/**
+ * Offline Page
+ * Displayed when the user is offline
+ */
 export default function OfflinePage() {
-  const [isOnline, setIsOnline] = useState(true);
-
-  useEffect(() => {
-    setIsOnline(navigator.onLine);
-
-    const handleOnline = () => {
-      setIsOnline(true);
-      window.location.href = "/";
-    };
-
-    const handleOffline = () => {
-      setIsOnline(false);
-    };
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
-
-  const handleRetry = () => {
-    if (navigator.onLine) {
-      window.location.href = "/";
-    } else {
-      alert("Aún no hay conexión a internet. Por favor, verifica tu conexión.");
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-accent to-accentLight flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        <div className="text-center">
-          {/* Icon */}
-          <div className="inline-flex items-center justify-center w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full mb-8 animate-pulse">
-            <span className="text-7xl">📡</span>
-          </div>
+    <>
+      <Header />
+      <main className="min-h-screen pt-20 flex items-center justify-center bg-gradient-to-br from-purple-50 to-indigo-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-2xl mx-auto">
+            <Card variant="glass" className="p-8 sm:p-12 text-center">
+              {/* Icon */}
+              <div className="mb-8 animate-float">
+                <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-6xl shadow-2xl">
+                  📡
+                </div>
+              </div>
 
-          {/* Title */}
-          <h1 className="text-4xl font-display font-bold text-white mb-4">
-            Sin Conexión a Internet
-          </h1>
+              {/* Content */}
+              <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4 font-display">
+                Sin Conexión
+              </h1>
+              <p className="text-xl text-gray-600 mb-8">
+                No hay conexión a internet en este momento
+              </p>
 
-          {/* Description */}
-          <p className="text-xl text-white/90 mb-8 leading-relaxed">
-            No hay conexión disponible en este momento. Por favor, verifica tu conexión a internet e intenta nuevamente.
-          </p>
+              {/* Info Cards */}
+              <div className="space-y-4 mb-8 text-left">
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">💡</span>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-1">
+                        Contenido en Caché
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        Algunas páginas que visitaste anteriormente pueden estar disponibles sin conexión
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-          {/* Retry Button */}
-          <button
-            onClick={handleRetry}
-            className="px-8 py-4 bg-white text-accent rounded-xl font-bold text-lg hover:bg-white/90 transition-all duration-200 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center space-x-3 mx-auto mb-8"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            <span>Reintentar Conexión</span>
-          </button>
+                <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">📞</span>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-1">
+                        Llamadas de Emergencia
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        Puedes realizar llamadas de emergencia incluso sin conexión a internet
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-          {/* Info Box */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center justify-center space-x-2">
-              <span>📚</span>
-              <span>Información Disponible Offline</span>
-            </h3>
-            <ul className="space-y-3 text-left">
-              <li className="flex items-start space-x-3 text-white/90">
-                <svg className="w-5 h-5 text-white mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Escenarios legales guardados en caché</span>
-              </li>
-              <li className="flex items-start space-x-3 text-white/90">
-                <svg className="w-5 h-5 text-white mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Guías de derechos básicos</span>
-              </li>
-              <li className="flex items-start space-x-3 text-white/90">
-                <svg className="w-5 h-5 text-white mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Números de emergencia: 911, 800 715 2000</span>
-              </li>
-              <li className="flex items-start space-x-3 text-white/90">
-                <svg className="w-5 h-5 text-white mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Recursos descargados previamente</span>
-              </li>
-            </ul>
-          </div>
+                <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">🔄</span>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-1">
+                        Reconexión Automática
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        La aplicación se reconectará automáticamente cuando vuelvas a tener internet
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          {/* Status Indicator */}
-          <div className="mt-8 flex items-center justify-center space-x-2">
-            <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-400' : 'bg-red-400'} animate-pulse`}></div>
-            <span className="text-sm text-white/80">
-              {isOnline ? 'Conectado' : 'Sin conexión'}
-            </span>
-          </div>
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={() => window.location.reload()}
+                >
+                  <span className="text-xl mr-2">🔄</span>
+                  Reintentar
+                </Button>
+                <Button
+                  variant="sos"
+                  size="lg"
+                  icon="🚨"
+                  onClick={() => window.location.href = 'tel:911'}
+                >
+                  Emergencia 911
+                </Button>
+              </div>
 
-          {/* Footer */}
-          <div className="mt-8 text-white/70 text-sm">
-            <p>🛡️ Defiéndete MX - Protegiendo tus derechos</p>
+              {/* Emergency Numbers */}
+              <div className="mt-12 pt-8 border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Números de Emergencia
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                  <a 
+                    href="tel:911" 
+                    className="flex items-center justify-center gap-2 p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors duration-200"
+                  >
+                    <span className="text-xl">🚨</span>
+                    <div className="text-left">
+                      <div className="font-semibold text-gray-900">Emergencias</div>
+                      <div className="text-red-600 font-bold">911</div>
+                    </div>
+                  </a>
+                  <a 
+                    href="tel:089" 
+                    className="flex items-center justify-center gap-2 p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                  >
+                    <span className="text-xl">👮</span>
+                    <div className="text-left">
+                      <div className="font-semibold text-gray-900">Denuncia Anónima</div>
+                      <div className="text-blue-600 font-bold">089</div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
-      </div>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }
