@@ -139,7 +139,7 @@ const withPWA = require('next-pwa')({
 
 module.exports = withPWA({
   reactStrictMode: true,
-  output: 'export',
+  // Removed 'output: export' to support API routes
   images: {
     unoptimized: true,
   },

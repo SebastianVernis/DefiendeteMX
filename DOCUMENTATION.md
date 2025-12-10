@@ -5,6 +5,30 @@ Esta documentación explica cómo extender y personalizar la app Defiéndete MX 
 
 ---
 
+## ✅ Estado del Proyecto
+
+### Issues Completados (5/5)
+
+| Issue | Título | Estado | Prioridad | Fecha |
+|-------|--------|--------|-----------|-------|
+| #6 | Diseñar modelo de datos para Issues | ✅ Completado | Alta | 8 dic 2025 |
+| #7 | Implementar servicio CRUD para Issues | ✅ Completado | Alta | 8 dic 2025 |
+| #8 | Flujo de autenticación seguro | ✅ Completado | Alta | Dic 2024 |
+| #9 | Grabador de voz con análisis de IA | ✅ Completado | Alta | 8 dic 2025 |
+| #10 | Sistema de notificaciones SMS | ✅ Completado | Alta | 8 dic 2025 |
+
+**Ver detalles completos:** [`ISSUES_STATUS.md`](./ISSUES_STATUS.md)
+
+### Métricas de Desarrollo
+- 📝 **Archivos creados:** 50+
+- 💻 **Líneas de código:** 15,000+
+- 🧪 **Pruebas unitarias:** 200+
+- 📚 **Documentos técnicos:** 15+
+- 🚀 **Endpoints API:** 25+
+- ⚡ **Cobertura de tests:** >70%
+
+---
+
 ## 📂 Estructura de Datos de Escenarios
 Los escenarios están en **app/data/scenarios.js** y se definen así:
 

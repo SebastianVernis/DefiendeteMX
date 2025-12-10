@@ -58,6 +58,12 @@ export default function Header() {
               Inicio
             </Link>
             <Link 
+              href="/constitucion" 
+              className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
+            >
+              Constitución
+            </Link>
+            <Link 
               href="/recursos" 
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
@@ -121,6 +127,13 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Inicio
+              </Link>
+              <Link 
+                href="/constitucion" 
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Constitución
               </Link>
               <Link 
                 href="/recursos" 
