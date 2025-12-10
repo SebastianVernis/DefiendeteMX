@@ -4,7 +4,7 @@
 
 - Node.js 18+ instalado
 - npm o yarn
-- Cuenta en plataforma de hosting (Vercel, Netlify, Cloudflare Pages)
+- Cuenta en Cloudflare Pages (recomendado)
 - Git configurado
 
 ## 🔧 Preparación para Deployment
@@ -49,51 +49,7 @@ NEXT_PUBLIC_API_URL=https://api.tudominio.com
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
-## 🌐 Deployment en Vercel (Recomendado)
-
-### Opción 1: Deploy desde GitHub
-
-1. **Push a GitHub**
-   ```bash
-   git add .
-   git commit -m "feat: PWA implementation and frontend restructuring"
-   git push origin main
-   ```
-
-2. **Conectar con Vercel**
-   - Ve a [vercel.com](https://vercel.com)
-   - Click en "New Project"
-   - Importa tu repositorio de GitHub
-   - Vercel detectará automáticamente Next.js
-
-3. **Configuración**
-   - Framework Preset: Next.js
-   - Build Command: `npm run build`
-   - Output Directory: `.next`
-   - Install Command: `npm install`
-
-4. **Deploy**
-   - Click en "Deploy"
-   - Espera a que termine (2-3 minutos)
-   - Tu app estará en: `https://tu-proyecto.vercel.app`
-
-### Opción 2: Deploy con Vercel CLI
-
-```bash
-# Instalar Vercel CLI
-npm i -g vercel
-
-# Login
-vercel login
-
-# Deploy
-vercel
-
-# Deploy a producción
-vercel --prod
-```
-
-## ☁️ Deployment en Cloudflare Pages
+## ☁️ Deployment en Cloudflare Pages (Recomendado)
 
 ### Desde GitHub
 
@@ -130,10 +86,21 @@ npm i -g wrangler
 wrangler login
 
 # Deploy
-wrangler pages publish out --project-name=defiendete-mx
+wrangler pages deploy .next --project-name=defiendete-mx
 ```
 
-## 🔷 Deployment en Netlify
+### Variables de Entorno en Cloudflare
+
+Configura estas variables en el dashboard de Cloudflare Pages:
+
+```
+MONGODB_URI=tu-mongodb-uri
+JWT_SECRET=tu-jwt-secret
+JWT_REFRESH_SECRET=tu-jwt-refresh-secret
+NODE_ENV=production
+```
+
+## 🔷 Deployment Alternativo en Netlify
 
 ### Desde GitHub
 
@@ -349,7 +316,7 @@ npx @sentry/wizard@latest -i nextjs
 Crea `.github/workflows/deploy.yml`:
 
 ```yaml
-name: Deploy to Production
+name: Deploy to Cloudflare Pages
 
 on:
   push:
@@ -373,13 +340,14 @@ jobs:
       - name: Build
         run: npm run build
         
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v20
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.ORG_ID }}
-          vercel-project-id: ${{ secrets.PROJECT_ID }}
-          vercel-args: '--prod'
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: defiendete-mx
+          directory: .next
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## 🐛 Troubleshooting

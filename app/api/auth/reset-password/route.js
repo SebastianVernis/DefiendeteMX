@@ -1,51 +1,26 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '../../../config/database';
 import User from '../../../models/User';
-import { verifyAccessToken } from '../../../lib/auth/jwt';
 import { validatePassword } from '../../../lib/auth/passwordValidator';
+import crypto from 'crypto';
 
 /**
- * POST /api/auth/change-password
- * Change user password
+ * POST /api/auth/reset-password
+ * Reset password with token
  */
 export async function POST(request) {
   try {
     await connectDB();
 
-    // Get token from cookies
-    const token = request.cookies.get('accessToken')?.value;
-
-    if (!token) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'No autenticado'
-        },
-        { status: 401 }
-      );
-    }
-
-    // Verify token
-    const decoded = verifyAccessToken(token);
-    if (!decoded) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Token inválido'
-        },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
-    const { currentPassword, newPassword } = body;
+    const { token, newPassword } = body;
 
     // Validate required fields
-    if (!currentPassword || !newPassword) {
+    if (!token || !newPassword) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Contraseña actual y nueva contraseña son requeridas'
+          error: 'Token y nueva contraseña son requeridos'
         },
         { status: 400 }
       );
@@ -64,29 +39,25 @@ export async function POST(request) {
       );
     }
 
-    // Find user
-    const user = await User.findById(decoded.userId).select('+password');
+    // Hash the token to compare with stored hash
+    const resetTokenHash = crypto
+      .createHash('sha256')
+      .update(token)
+      .digest('hex');
+
+    // Find user with valid reset token
+    const user = await User.findOne({
+      passwordResetToken: resetTokenHash,
+      passwordResetExpires: { $gt: Date.now() }
+    }).select('+password');
 
     if (!user) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Usuario no encontrado'
+          error: 'Token inválido o expirado'
         },
-        { status: 404 }
-      );
-    }
-
-    // Verify current password
-    const isPasswordValid = await user.comparePassword(currentPassword);
-
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Contraseña actual incorrecta'
-        },
-        { status: 401 }
+        { status: 400 }
       );
     }
 
@@ -96,31 +67,37 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          error: 'La nueva contraseña debe ser diferente a la actual'
+          error: 'La nueva contraseña debe ser diferente a la anterior'
         },
         { status: 400 }
       );
     }
 
-    // Update password
+    // Update password and clear reset token
     user.password = newPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    
+    // Invalidate all refresh tokens for security
+    user.refreshTokens = [];
+    
     await user.save();
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Contraseña actualizada exitosamente'
+        message: 'Contraseña restablecida exitosamente. Puedes iniciar sesión con tu nueva contraseña'
       },
       { status: 200 }
     );
 
   } catch (error) {
-    console.error('Change password error:', error);
+    console.error('Reset password error:', error);
     
     return NextResponse.json(
       {
         success: false,
-        error: 'Error al cambiar contraseña'
+        error: 'Error al restablecer contraseña'
       },
       { status: 500 }
     );

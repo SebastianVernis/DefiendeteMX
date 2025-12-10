@@ -141,6 +141,16 @@ export default function LoginForm() {
         )}
       </div>
 
+      {/* Forgot Password Link */}
+      <div className="text-right">
+        <a 
+          href="/auth/forgot-password" 
+          className="text-sm text-accent hover:text-accentLight font-medium"
+        >
+          ¿Olvidaste tu contraseña?
+        </a>
+      </div>
+
       {/* Submit Button */}
       <Button
         type="submit"
