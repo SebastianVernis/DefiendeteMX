@@ -7,6 +7,68 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [2.1.0] - 2025-12-10
+
+### ✨ Agregado
+
+#### Autenticación y Perfil de Usuario
+- **Middleware de protección de rutas**: Sistema completo de autenticación con JWT
+  - Protección automática de rutas privadas (/perfil, /issues/new, /grabador)
+  - Redirección inteligente post-login
+  - Verificación de tokens en cada request
+  
+- **Página de perfil de usuario** (/perfil)
+  - Edición de información personal (nombre, teléfono)
+  - Cambio de contraseña con validación de fortaleza
+  - Interfaz con tabs para información y seguridad
+  - Indicador visual de fortaleza de contraseña
+  
+- **Sistema de recuperación de contraseña**
+  - Endpoint para solicitar restablecimiento (/api/auth/forgot-password)
+  - Endpoint para restablecer contraseña (/api/auth/reset-password)
+  - Página de solicitud de recuperación (/auth/forgot-password)
+  - Página de restablecimiento con token (/auth/reset-password)
+  - Tokens seguros con hash SHA-256 y expiración de 1 hora
+  
+- **Endpoint de cambio de contraseña** (/api/auth/change-password)
+  - Validación de contraseña actual
+  - Verificación de fortaleza de nueva contraseña
+  - Prevención de reutilización de contraseña
+
+#### Optimizaciones para Cloudflare Workers
+- **next.config.js optimizado**
+  - Headers de seguridad (X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
+  - Configuración de caché para Service Worker y manifest
+  - Compresión y minificación habilitadas
+  - Optimización de CSS experimental
+  
+- **wrangler.toml actualizado**
+  - Configuración completa de build para Cloudflare Pages
+  - Headers personalizados para seguridad y performance
+  - Redirects configurados (/login → /auth/login, /register → /auth/register)
+  - Variables de entorno documentadas
+  
+- **Documentación actualizada**
+  - Eliminadas referencias a Vercel
+  - Cloudflare Pages como plataforma recomendada
+  - Instrucciones de deployment actualizadas
+  - GitHub Actions configurado para Cloudflare
+
+### 🔧 Mejorado
+
+- **Formulario de login**: Agregado enlace "¿Olvidaste tu contraseña?"
+- **Seguridad**: Implementación de jose para verificación JWT en middleware
+- **Performance**: Optimización de build para producción
+- **UX**: Mensajes de feedback mejorados en formularios de autenticación
+
+### 📚 Documentación
+
+- Actualizado DEPLOYMENT_INSTRUCTIONS.md con foco en Cloudflare Pages
+- Documentadas variables de entorno necesarias
+- Agregadas instrucciones de CI/CD con GitHub Actions
+
+---
+
 ## [2.0.0] - 2025-12-08
 
 ### ✨ Agregado
