@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { addEvidenceToIssue } from '@/app/issues/services/issueService.d1';
+import { addEvidenceToIssue } from '@/app/issues/services/issueService';
 
 /**
  * POST /api/issues/[id]/evidence

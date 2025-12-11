@@ -1,8 +1,8 @@
-export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
-import { UserDB } from '../../../lib/db';
-import bcrypt from 'bcrypt';
+import User from '../../../models/User';
+import dbConnect from '../../../lib/mongodb';
+import bcrypt from 'bcryptjs';
 import { generateAccessToken, verifyRefreshToken } from '../../../lib/auth/jwt';
 import { 
   getRefreshTokenFromCookies, 
