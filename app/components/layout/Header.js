@@ -55,28 +55,34 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6">
-            <Link 
-              href="/" 
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200"
+          <div className="hidden md:flex items-center gap-6">
+            <Link
+              href="/dashboard"
+              className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
-              Inicio
+              Dashboard
             </Link>
-            <Link 
-              href="/escenarios" 
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200"
+            <Link
+              href="/casos"
+              className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
-              Escenarios
+              Casos
             </Link>
-            <Link 
-              href="/recursos" 
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200"
+            <Link
+              href="/recursos"
+              className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
               Recursos
             </Link>
-            <Link 
-              href="/constitucion" 
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200"
+            <Link
+              href="/contactos"
+              className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
+            >
+              Contactos
+            </Link>
+            <Link
+              href="/escenarios"
+              className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
               Constitución
             </Link>
@@ -150,40 +156,54 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="lg:hidden py-6 animate-fadeIn bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
             <div className="flex flex-col gap-4">
-              <Link 
-                href="/" 
-                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium py-2 transition-colors duration-200"
+              <Link
+                href="/dashboard"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                🏠 Inicio
+                🏠 Dashboard
               </Link>
-              <Link 
-                href="/escenarios" 
-                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium py-2 transition-colors duration-200"
+              <Link
+                href="/casos"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                📚 Escenarios
+                📁 Mis Casos
               </Link>
-              <Link 
-                href="/recursos" 
-                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium py-2 transition-colors duration-200"
+              <Link
+                href="/recursos"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                📄 Recursos
+                📚 Recursos
               </Link>
-              <Link 
-                href="/constitucion" 
-                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium py-2 transition-colors duration-200"
+              <Link
+                href="/contactos"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                ⚖️ Constitución
+                👥 Contactos
               </Link>
-              <Link 
-                href="/favoritos" 
-                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium py-2 transition-colors duration-200"
+              <Link
+                href="/escenarios"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🎯 Escenarios
+              </Link>
+              <Link
+                href="/favoritos"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 ⭐ Favoritos
+              </Link>
+              <Link
+                href="/grabador"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🎙️ Grabadora
               </Link>
               <Link 
                 href="/grabador" 

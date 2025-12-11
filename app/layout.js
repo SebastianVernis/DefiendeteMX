@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import ChatWidget from './components/chat/ChatWidget';
+import PanicButton from './components/emergency/PanicButton';
 
 /**
  * Root Layout Component
