@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/app/config/database';
 import governmentApiService from '@/app/services/governmentApiService';
 
 /**
@@ -9,8 +8,8 @@ import governmentApiService from '@/app/services/governmentApiService';
  */
 export async function GET(request) {
   try {
-    await connectDB();
-
+    
+    await dbConnect();
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
 
@@ -36,22 +35,24 @@ export async function GET(request) {
       filters.reportType = searchParams.get('reportType');
     }
 
-    const result = await governmentApiService.getReportsByUser(userId, filters);
-
-    if (!result.success) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: result.error 
-        },
-        { status: 400 }
-      );
+    const reports = await governmentApiService.getUserReports(userId);
+    
+    // Filter results based on query params
+    let filteredReports = reports;
+    if (filters.status) {
+      filteredReports = filteredReports.filter(r => r.status === filters.status);
+    }
+    if (filters.targetEntity) {
+      filteredReports = filteredReports.filter(r => r.targetEntity === filters.targetEntity);
+    }
+    if (filters.reportType) {
+      filteredReports = filteredReports.filter(r => r.reportType === filters.reportType);
     }
 
     return NextResponse.json({
       success: true,
-      count: result.count,
-      data: result.data
+      count: filteredReports.length,
+      data: filteredReports
     });
   } catch (error) {
     console.error('GET /api/government/reports error:', error);
@@ -73,8 +74,8 @@ export async function GET(request) {
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
+    
+    await dbConnect();
     const body = await request.json();
 
     // Validate required fields
@@ -119,7 +120,7 @@ export async function POST(request) {
     }
 
     // Create government report
-    const result = await governmentApiService.createReportFromIssue(
+    const report = await governmentApiService.createReportFromIssue(
       body.issueId,
       body.userId,
       body.reportType,
@@ -127,20 +128,10 @@ export async function POST(request) {
       body.additionalData || {}
     );
 
-    if (!result.success) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: result.error 
-        },
-        { status: 400 }
-      );
-    }
-
     return NextResponse.json({
       success: true,
       message: 'Government report created successfully',
-      data: result.data
+      data: report
     }, { status: 201 });
   } catch (error) {
     console.error('POST /api/government/reports error:', error);

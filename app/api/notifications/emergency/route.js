@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import notificationService from '../../../services/notificationService';
-import connectDB from '../../../config/database';
 
 /**
  * POST /api/notifications/emergency
@@ -8,8 +7,8 @@ import connectDB from '../../../config/database';
  */
 export async function POST(request) {
   try {
-    await connectDB();
     
+    await dbConnect();
     const body = await request.json();
     
     // Validate required fields

@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/app/config/database';
 import { updateIssueStatus } from '@/app/issues/services/issueService';
 
 /**
@@ -9,8 +8,6 @@ import { updateIssueStatus } from '@/app/issues/services/issueService';
  */
 export async function PATCH(request, { params }) {
   try {
-    await connectDB();
-
     const { id } = params;
     const body = await request.json();
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '../../../config/database';
+import dbConnect from '../../../lib/mongodb';
 import User from '../../../models/User';
 import { generateTokens } from '../../../lib/auth/jwt';
 import { setAuthCookies } from '../../../lib/auth/sessionManager';
@@ -11,8 +11,8 @@ import { validateEmail } from '../../../lib/auth/passwordValidator';
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
+    await dbConnect();
+    
     const body = await request.json();
     const { email, password } = body;
 
@@ -40,7 +40,7 @@ export async function POST(request) {
     }
 
     // Find user by email (including password field)
-    const user = await User.findByCredentials(email);
+    const user = await User.findOne({ email: email.toLowerCase(), isActive: true, isDeleted: false }).select('+password');
 
     if (!user) {
       return NextResponse.json(
@@ -67,16 +67,20 @@ export async function POST(request) {
       );
     }
 
-    // Verify password
+    // Verify password using User model method
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
       // Increment login attempts
-      await user.incLoginAttempts();
-
-      // Check if account is now locked
-      const updatedUser = await User.findById(user._id);
-      if (updatedUser.isLocked) {
+      const newAttempts = (user.loginAttempts || 0) + 1;
+      const maxLoginAttempts = 5;
+      const lockTime = 2 * 60 * 60 * 1000; // 2 hours
+      
+      user.loginAttempts = newAttempts;
+      
+      if (newAttempts >= maxLoginAttempts) {
+        user.lockUntil = new Date(Date.now() + lockTime);
+        await user.save();
         return NextResponse.json(
           {
             success: false,
@@ -85,21 +89,24 @@ export async function POST(request) {
           { status: 403 }
         );
       }
+      
+      await user.save();
 
       return NextResponse.json(
         {
           success: false,
           error: 'Credenciales inválidas',
-          attemptsLeft: 5 - updatedUser.loginAttempts
+          attemptsLeft: maxLoginAttempts - newAttempts
         },
         { status: 401 }
       );
     }
 
     // Reset login attempts on successful login
-    if (user.loginAttempts > 0) {
-      await user.resetLoginAttempts();
-    }
+    user.loginAttempts = 0;
+    user.lockUntil = null;
+    user.lastLogin = new Date();
+    await user.save();
 
     // Generate tokens
     const { accessToken, refreshToken } = generateTokens(user);
@@ -114,15 +121,11 @@ export async function POST(request) {
                       request.headers.get('x-real-ip') || 
                       'Unknown';
 
-    // Save refresh token to user
+    // Save refresh token to user using model method
     await user.addRefreshToken(refreshToken, refreshTokenExpires, userAgent, ipAddress);
 
-    // Update last login
-    user.lastLogin = new Date();
-    await user.save();
-
     // Get user without password
-    const userWithoutPassword = await User.findById(user._id).select('-password');
+    const userWithoutPassword = await User.findById(user._id);
 
     // Create response
     const response = NextResponse.json(

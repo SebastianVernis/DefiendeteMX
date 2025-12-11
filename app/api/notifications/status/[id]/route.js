@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import notificationService from '../../../../services/notificationService';
 import smsService from '../../../../services/smsService';
-import connectDB from '../../../../config/database';
 
 /**
  * GET /api/notifications/status/:id
@@ -9,6 +8,8 @@ import connectDB from '../../../../config/database';
  */
 export async function GET(request, { params }) {
   try {
+    
+    await dbConnect();
     await connectDB();
     
     const { id } = params;
@@ -30,7 +31,7 @@ export async function GET(request, { params }) {
         
         // Update notification status if changed
         if (providerStatus.status === 'delivered' && notification.status !== 'DELIVERED') {
-          await notification.markAsDelivered();
+          await notificationService.updateNotificationStatus(notification.id, 'DELIVERED');
         }
       } catch (statusError) {
         console.warn('Could not fetch provider status:', statusError.message);
@@ -40,7 +41,7 @@ export async function GET(request, { params }) {
     return NextResponse.json({
       success: true,
       data: {
-        id: notification._id,
+        id: notification.id,
         type: notification.type,
         category: notification.category,
         priority: notification.priority,
@@ -67,7 +68,7 @@ export async function GET(request, { params }) {
         error: notification.error,
         createdAt: notification.createdAt,
         updatedAt: notification.updatedAt,
-        canRetry: notification.canRetry
+        canRetry: notification.status === 'FAILED' && (notification.delivery?.attempts || 0) < 3
       }
     }, { status: 200 });
     
@@ -88,8 +89,8 @@ export async function GET(request, { params }) {
  */
 export async function PATCH(request, { params }) {
   try {
-    await connectDB();
     
+    await dbConnect();
     const { id } = params;
     const body = await request.json();
     const { action } = body;
@@ -112,7 +113,14 @@ export async function PATCH(request, { params }) {
     
     switch (action) {
       case 'mark_read':
-        result = await notificationService.markNotificationAsRead(id);
+        const userId = body.userId;
+        if (!userId) {
+          return NextResponse.json(
+            { success: false, error: 'userId is required for mark_read action' },
+            { status: 400 }
+          );
+        }
+        result = await notificationService.markNotificationAsRead(id, userId);
         break;
         
       case 'retry':

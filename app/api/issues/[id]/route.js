@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/app/config/database';
 import { getIssueById, updateIssue, deleteIssue } from '@/app/issues/services/issueService';
 
 /**
@@ -8,8 +7,6 @@ import { getIssueById, updateIssue, deleteIssue } from '@/app/issues/services/is
  */
 export async function GET(request, { params }) {
   try {
-    await connectDB();
-
     const { id } = params;
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
@@ -68,8 +65,6 @@ export async function GET(request, { params }) {
  */
 export async function PUT(request, { params }) {
   try {
-    await connectDB();
-
     const { id } = params;
     const body = await request.json();
 
@@ -142,8 +137,6 @@ export async function PUT(request, { params }) {
  */
 export async function DELETE(request, { params }) {
   try {
-    await connectDB();
-
     const { id } = params;
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');

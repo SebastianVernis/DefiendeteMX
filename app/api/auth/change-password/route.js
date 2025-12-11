@@ -1,27 +1,38 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '../../../config/database';
+import dbConnect from '../../../lib/mongodb';
 import User from '../../../models/User';
-import { authenticate } from '../../../lib/middleware/authMiddleware';
+import bcrypt from 'bcryptjs';
+import { verifyAccessToken } from '../../../lib/auth/jwt';
 import { validatePassword } from '../../../lib/auth/passwordValidator';
 
 /**
- * PUT /api/auth/change-password
+ * POST /api/auth/change-password
  * Change user password
  */
-export async function PUT(request) {
+export async function POST(request) {
   try {
-    await connectDB();
+    // Get token from cookies
+    const token = request.cookies.get('accessToken')?.value;
 
-    // Authenticate user
-    const authResult = await authenticate(request);
-
-    if (!authResult.authenticated) {
+    if (!token) {
       return NextResponse.json(
         {
           success: false,
-          error: authResult.error
+          error: 'No autenticado'
         },
-        { status: authResult.statusCode }
+        { status: 401 }
+      );
+    }
+
+    // Verify token
+    const decoded = verifyAccessToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Token inválido'
+        },
+        { status: 401 }
       );
     }
 
@@ -45,27 +56,15 @@ export async function PUT(request) {
       return NextResponse.json(
         {
           success: false,
-          error: 'La nueva contraseña no cumple con los requisitos de seguridad',
+          error: 'Contraseña no cumple con los requisitos',
           errors: passwordValidation.errors
         },
         { status: 400 }
       );
     }
 
-    // Check if new password is same as current
-    if (currentPassword === newPassword) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'La nueva contraseña debe ser diferente a la actual'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Get user with password field
-    const user = await User.findById(authResult.userId).select('+password');
-
+    // Find user
+    const user = await UserDB.findById(decoded.userId);
     if (!user) {
       return NextResponse.json(
         {
@@ -76,8 +75,21 @@ export async function PUT(request) {
       );
     }
 
+    // Get user with password for verification
+    const userWithPassword = await UserDB.findByCredentials(user.email);
+
+    if (!userWithPassword) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Usuario no encontrado'
+        },
+        { status: 404 }
+      );
+    }
+
     // Verify current password
-    const isPasswordValid = await user.comparePassword(currentPassword);
+    const isPasswordValid = await bcrypt.compare(currentPassword, userWithPassword.password);
 
     if (!isPasswordValid) {
       return NextResponse.json(
@@ -89,12 +101,23 @@ export async function PUT(request) {
       );
     }
 
-    // Update password
-    user.password = newPassword; // Will be hashed by pre-save hook
-    await user.save();
+    // Check if new password is same as current
+    const isSamePassword = await bcrypt.compare(newPassword, userWithPassword.password);
+    if (isSamePassword) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'La nueva contraseña debe ser diferente a la actual'
+        },
+        { status: 400 }
+      );
+    }
 
-    // Optionally, invalidate all refresh tokens (logout from all devices)
-    // await user.removeAllRefreshTokens();
+    // Hash and update password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await UserDB.update(user.id, {
+      password: hashedPassword
+    });
 
     return NextResponse.json(
       {
