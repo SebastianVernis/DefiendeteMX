@@ -1,7 +1,5 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
-import notificationService from '../../../services/notificationService.d1';
+import notificationService from '../../../services/notificationService';
 
 /**
  * POST /api/notifications/emergency
@@ -9,6 +7,8 @@ import notificationService from '../../../services/notificationService.d1';
  */
 export async function POST(request) {
   try {
+    
+    await dbConnect();
     const body = await request.json();
     
     // Validate required fields

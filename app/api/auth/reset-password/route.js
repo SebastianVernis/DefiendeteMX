@@ -1,9 +1,8 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
-import { UserDB, getDB } from '../../../lib/db';
-import bcrypt from 'bcrypt';
-import crypto from 'crypto';
+import dbConnect from '../../../lib/mongodb';
+import User from '../../../models/User';
+import bcrypt from 'bcryptjs';
+import { randomBytes } from 'crypto';
 import { validatePassword } from '../../../lib/auth/passwordValidator';
 
 /**
@@ -12,6 +11,8 @@ import { validatePassword } from '../../../lib/auth/passwordValidator';
  */
 export async function POST(request) {
   try {
+    
+    await dbConnect();
     const body = await request.json();
     const { token, newPassword } = body;
 

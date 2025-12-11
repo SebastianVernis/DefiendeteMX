@@ -1,5 +1,3 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
 import smsService from '../../../services/smsService';
 
@@ -9,6 +7,8 @@ import smsService from '../../../services/smsService';
  */
 export async function POST(request) {
   try {
+    
+    await dbConnect();
     const body = await request.json();
     
     // Validate required fields

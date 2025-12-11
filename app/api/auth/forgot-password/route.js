@@ -1,8 +1,7 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
-import { UserDB } from '../../../lib/db';
-import crypto from 'crypto';
+import dbConnect from '../../../lib/mongodb';
+import User from '../../../models/User';
+import { randomBytes } from 'crypto';
 import { validateEmail } from '../../../lib/auth/passwordValidator';
 
 /**
