@@ -12,8 +12,6 @@ export function LanguageProvider({ children }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-
     // Load language from localStorage
     const savedLanguage = localStorage.getItem(LANGUAGE_KEY);
 
@@ -26,6 +24,8 @@ export function LanguageProvider({ children }) {
       setLanguage(supportedLanguage);
       localStorage.setItem(LANGUAGE_KEY, supportedLanguage);
     }
+    
+    setMounted(true);
   }, []);
 
   const changeLanguage = (lang) => {
