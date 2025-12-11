@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { verifyAuth } from '@/app/lib/auth/jwt';
+import { verifyAccessToken } from '@/app/lib/auth/jwt';
 import dbConnect from '@/app/config/database';
 import Issue from '@/app/issues/models/Issue';
 import Chat from '@/app/models/Chat';
@@ -10,16 +10,45 @@ import Chat from '@/app/models/Chat';
  */
 export async function GET(request) {
   try {
-    const authResult = await verifyAuth(request);
-    if (!authResult.valid) {
+    // Por ahora retornar datos mock si no hay autenticación
+    // En producción, descomentar la autenticación
+    /*
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
         { error: 'No autorizado' },
         { status: 401 }
       );
     }
 
-    const userId = authResult.user.id;
+    const token = authHeader.split(' ')[1];
+    const decoded = verifyAccessToken(token);
 
+    if (!decoded) {
+      return NextResponse.json(
+        { error: 'Token inválido' },
+        { status: 401 }
+      );
+    }
+
+    const userId = decoded.userId;
+    */
+
+    // Retornar datos mock para desarrollo
+    return NextResponse.json({
+      success: true,
+      stats: {
+        activeCases: 0,
+        pendingActions: 0,
+        savedResources: 0,
+        emergencyContacts: 0
+      },
+      recentActivity: [],
+      alerts: []
+    });
+
+    // TODO: Descomentar cuando la DB esté configurada
+    /*
     await dbConnect();
 
     // Obtener casos activos del usuario
@@ -107,6 +136,7 @@ export async function GET(request) {
       recentActivity,
       alerts: quickAlerts
     });
+    */
 
   } catch (error) {
     console.error('Dashboard stats error:', error);

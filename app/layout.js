@@ -1,6 +1,7 @@
 import './globals.css';
 import { AuthProvider } from './contexts/AuthContext';
 import ChatWidget from './components/chat/ChatWidget';
+import PanicButton from './components/emergency/PanicButton';
 
 /**
  * Root Layout Component
@@ -109,6 +110,9 @@ export default function RootLayout({ children }) {
 
           {/* AI Chat Widget */}
           <ChatWidget />
+
+          {/* Emergency Panic Button */}
+          <PanicButton />
         </AuthProvider>
       </body>
     </html>
