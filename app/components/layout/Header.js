@@ -50,27 +50,33 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link 
-              href="/" 
+          <div className="hidden md:flex items-center gap-6">
+            <Link
+              href="/dashboard"
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
-              Inicio
+              Dashboard
             </Link>
-            <Link 
-              href="/constitucion" 
+            <Link
+              href="/casos"
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
-              Constitución
+              Casos
             </Link>
-            <Link 
-              href="/recursos" 
+            <Link
+              href="/recursos"
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
               Recursos
             </Link>
-            <Link 
-              href="#escenarios" 
+            <Link
+              href="/contactos"
+              className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
+            >
+              Contactos
+            </Link>
+            <Link
+              href="/escenarios"
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
               Escenarios
@@ -121,33 +127,54 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="md:hidden py-6 animate-fadeIn">
             <div className="flex flex-col gap-4">
-              <Link 
-                href="/" 
+              <Link
+                href="/dashboard"
                 className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Inicio
+                🏠 Dashboard
               </Link>
-              <Link 
-                href="/constitucion" 
+              <Link
+                href="/casos"
                 className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Constitución
+                📁 Mis Casos
               </Link>
-              <Link 
-                href="/recursos" 
+              <Link
+                href="/recursos"
                 className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Recursos
+                📚 Recursos
               </Link>
-              <Link 
-                href="#escenarios" 
+              <Link
+                href="/contactos"
                 className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Escenarios
+                👥 Contactos
+              </Link>
+              <Link
+                href="/escenarios"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🎯 Escenarios
+              </Link>
+              <Link
+                href="/favoritos"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                ⭐ Favoritos
+              </Link>
+              <Link
+                href="/grabador"
+                className="text-gray-700 hover:text-purple-600 font-medium py-2 transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🎙️ Grabadora
               </Link>
               <div className="pt-4 border-t border-gray-200">
                 <Button 
