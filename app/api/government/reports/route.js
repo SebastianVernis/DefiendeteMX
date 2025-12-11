@@ -1,7 +1,5 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
-import governmentApiService from '@/app/services/governmentApiService.d1';
+import governmentApiService from '@/app/services/governmentApiService';
 
 /**
  * GET /api/government/reports
@@ -10,6 +8,8 @@ import governmentApiService from '@/app/services/governmentApiService.d1';
  */
 export async function GET(request) {
   try {
+    
+    await dbConnect();
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
 
@@ -74,6 +74,8 @@ export async function GET(request) {
  */
 export async function POST(request) {
   try {
+    
+    await dbConnect();
     const body = await request.json();
 
     // Validate required fields

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { updateIssueStatus } from '@/app/issues/services/issueService.d1';
+import { updateIssueStatus } from '@/app/issues/services/issueService';
 
 /**
  * PATCH /api/issues/[id]/status

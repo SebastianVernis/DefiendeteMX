@@ -1,7 +1,5 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
-import { createIssue, getUserIssues } from '@/app/issues/services/issueService.d1';
+import { createIssue, getUserIssues } from '@/app/issues/services/issueService';
 
 /**
  * GET /api/issues
@@ -10,6 +8,8 @@ import { createIssue, getUserIssues } from '@/app/issues/services/issueService.d
  */
 export async function GET(request) {
   try {
+    
+    await dbConnect();
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
 
@@ -54,6 +54,8 @@ export async function GET(request) {
  */
 export async function POST(request) {
   try {
+    
+    await dbConnect();
     const body = await request.json();
 
     // Validate required fields

@@ -1,7 +1,6 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
-import { VoiceRecordingDB, getDB } from '@/app/lib/db';
+import dbConnect from '@/app/lib/mongodb';
+import VoiceRecording from '@/app/models/VoiceRecording';
 import { validateAudioFile } from '@/app/issues/services/aiAnalysisService';
 
 /**
@@ -10,6 +9,8 @@ import { validateAudioFile } from '@/app/issues/services/aiAnalysisService';
  */
 export async function POST(request) {
   try {
+    
+    await dbConnect();
     // Parse form data
     const formData = await request.formData();
     const audioFile = formData.get('audio');
@@ -133,6 +134,8 @@ export async function POST(request) {
  */
 export async function GET(request) {
   try {
+    
+    await dbConnect();
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
     const issueId = searchParams.get('issueId');

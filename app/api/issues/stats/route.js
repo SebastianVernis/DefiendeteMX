@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getUserIssueStats } from '@/app/issues/services/issueService.d1';
+import { getUserIssueStats } from '@/app/issues/services/issueService';
 
 /**
  * GET /api/issues/stats
