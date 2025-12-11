@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 /**
  * Authentication Context
@@ -203,6 +203,17 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
+}
+
+/**
+ * Custom hook to use auth context
+ */
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
 
 export default AuthContext;

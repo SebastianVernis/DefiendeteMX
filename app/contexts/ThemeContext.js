@@ -11,8 +11,6 @@ export function ThemeProvider({ children }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-
     // Load theme from localStorage
     const savedTheme = localStorage.getItem(THEME_KEY);
 
@@ -26,6 +24,8 @@ export function ThemeProvider({ children }) {
       setTheme(initialTheme);
       document.documentElement.classList.toggle('dark', initialTheme === 'dark');
     }
+    
+    setMounted(true);
   }, []);
 
   const toggleTheme = () => {

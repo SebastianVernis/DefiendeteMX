@@ -1,5 +1,7 @@
 import './globals.css';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import ChatWidget from './components/chat/ChatWidget';
 import PanicButton from './components/emergency/PanicButton';
 
@@ -86,34 +88,35 @@ export default function RootLayout({ children }) {
           rel="stylesheet" 
         />
       </head>
-      <body className="min-h-screen bg-background text-textPrimary font-sans antialiased">
-        <AuthProvider>
-          {/* Main App Container */}
-          <div id="root" className="flex flex-col min-h-screen">
-            {/* Skip to main content - Accessibility */}
-            <a 
-              href="#main-content" 
-              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg"
-            >
-              Saltar al contenido principal
-            </a>
-            
-            {/* Main Content Area */}
-            <main id="main-content" className="flex-grow">
-              {children}
-            </main>
-          </div>
+      <body className="min-h-screen bg-background dark:bg-gray-900 text-textPrimary dark:text-gray-100 font-sans antialiased transition-colors duration-300">
+        <ThemeProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              {/* Main App Container */}
+              <div id="root" className="flex flex-col min-h-screen">
+                {/* Skip to main content - Accessibility */}
+                <a 
+                  href="#main-content" 
+                  className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-white focus:rounded-lg focus:shadow-lg"
+                >
+                  Saltar al contenido principal
+                </a>
+                
+                {/* Main Content Area */}
+                <main id="main-content" className="flex-grow">
+                  {children}
+                </main>
+              </div>
 
-          {/* Portal for Modals and Overlays */}
-          <div id="modal-root"></div>
-          <div id="toast-root"></div>
+              {/* Portal for Modals and Overlays */}
+              <div id="modal-root"></div>
+              <div id="toast-root"></div>
 
-          {/* AI Chat Widget */}
-          <ChatWidget />
-
-          {/* Emergency Panic Button */}
-          <PanicButton />
-        </AuthProvider>
+              {/* AI Chat Widget */}
+              <ChatWidget />
+            </AuthProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

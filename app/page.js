@@ -67,6 +67,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
+      <EmergencyBanner variant="warning" />
       <main>
         <Hero />
 

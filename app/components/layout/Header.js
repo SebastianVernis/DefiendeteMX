@@ -3,14 +3,19 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Button from '../ui/Button';
+import ThemeToggle from '../ui/ThemeToggle';
+import LanguageToggle from '../ui/LanguageToggle';
+import WhatsAppSOS from '../emergency/WhatsAppSOS';
+import { useAuth } from '../../contexts/AuthContext';
 
 /**
  * Modern Header Component
- * Features glassmorphism, smooth animations, and mobile menu
+ * Features glassmorphism, smooth animations, mobile menu, and emergency tools
  */
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,12 +84,36 @@ export default function Header() {
               href="/escenarios"
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
-              Escenarios
+              Constitución
             </Link>
+            <Link 
+              href="/favoritos" 
+              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200"
+            >
+              ⭐ Favoritos
+            </Link>
+            <Link 
+              href="/grabador" 
+              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200"
+            >
+              🎙️ Grabador
+            </Link>
+            {user?.role === 'ADMIN' && (
+              <Link 
+                href="/admin" 
+                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors duration-200"
+              >
+                👤 Admin
+              </Link>
+            )}
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* Actions */}
+          <div className="hidden lg:flex items-center gap-3">
+            <ThemeToggle />
+            <LanguageToggle />
+            <div className="w-px h-8 bg-gray-300 dark:bg-gray-700" />
+            <WhatsAppSOS compact />
             <Button 
               variant="sos" 
               size="md"
@@ -99,23 +128,23 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200"
+            className="lg:hidden p-2 rounded-lg hover:bg-purple-50 dark:hover:bg-gray-800 transition-colors duration-200"
             aria-label={isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={isMobileMenuOpen}
           >
             <div className="w-6 h-5 flex flex-col justify-between">
               <span 
-                className={`w-full h-0.5 bg-gray-700 rounded-full transition-all duration-300 ${
+                className={`w-full h-0.5 bg-gray-700 dark:bg-gray-300 rounded-full transition-all duration-300 ${
                   isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''
                 }`}
               />
               <span 
-                className={`w-full h-0.5 bg-gray-700 rounded-full transition-all duration-300 ${
+                className={`w-full h-0.5 bg-gray-700 dark:bg-gray-300 rounded-full transition-all duration-300 ${
                   isMobileMenuOpen ? 'opacity-0' : ''
                 }`}
               />
               <span 
-                className={`w-full h-0.5 bg-gray-700 rounded-full transition-all duration-300 ${
+                className={`w-full h-0.5 bg-gray-700 dark:bg-gray-300 rounded-full transition-all duration-300 ${
                   isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''
                 }`}
               />
@@ -125,7 +154,7 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-6 animate-fadeIn">
+          <div className="lg:hidden py-6 animate-fadeIn bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
             <div className="flex flex-col gap-4">
               <Link
                 href="/dashboard"
@@ -176,7 +205,30 @@ export default function Header() {
               >
                 🎙️ Grabadora
               </Link>
-              <div className="pt-4 border-t border-gray-200">
+              <Link 
+                href="/grabador" 
+                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium py-2 transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                🎙️ Grabador de Voz
+              </Link>
+              {user?.role === 'ADMIN' && (
+                <Link 
+                  href="/admin" 
+                  className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium py-2 transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  👤 Panel Admin
+                </Link>
+              )}
+              
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-800 flex gap-3">
+                <ThemeToggle className="flex-1" />
+                <LanguageToggle className="flex-1" />
+              </div>
+              
+              <div className="pt-2 space-y-3">
+                <WhatsAppSOS />
                 <Button 
                   variant="sos" 
                   size="md"

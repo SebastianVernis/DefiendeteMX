@@ -1,13 +1,34 @@
 'use client';
 
-import { useTheme } from '../../contexts/ThemeContext';
+import { useEffect, useState } from 'react';
 
 /**
  * Theme Toggle Button
  * Switches between light and dark mode
  */
 export default function ThemeToggle({ className = '' }) {
-  const { theme, toggleTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem('defiendete-mx-theme') || 'light';
+    setTheme(savedTheme);
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('defiendete-mx-theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  };
+
+  if (!mounted) {
+    return (
+      <div className={`w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 ${className}`} />
+    );
+  }
 
   return (
     <button

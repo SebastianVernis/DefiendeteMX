@@ -1,18 +1,34 @@
 'use client';
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useEffect, useState } from 'react';
 
 /**
  * Language Toggle Component
  * Switches between Spanish and English
  */
 export default function LanguageToggle({ className = '' }) {
-  const { language, changeLanguage } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+  const [language, setLanguage] = useState('es');
+
+  useEffect(() => {
+    // Load language from localStorage
+    const savedLanguage = localStorage.getItem('defiendete-mx-language') || 'es';
+    setLanguage(savedLanguage);
+    setMounted(true);
+  }, []);
 
   const toggleLanguage = () => {
     const newLang = language === 'es' ? 'en' : 'es';
-    changeLanguage(newLang);
+    setLanguage(newLang);
+    localStorage.setItem('defiendete-mx-language', newLang);
+    document.documentElement.lang = newLang;
   };
+
+  if (!mounted) {
+    return (
+      <div className={`px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 h-10 w-20 ${className}`} />
+    );
+  }
 
   return (
     <button
