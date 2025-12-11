@@ -50,27 +50,33 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link 
-              href="/" 
+          <div className="hidden md:flex items-center gap-6">
+            <Link
+              href="/dashboard"
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
-              Inicio
+              Dashboard
             </Link>
-            <Link 
-              href="/constitucion" 
+            <Link
+              href="/casos"
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
-              Constitución
+              Casos
             </Link>
-            <Link 
-              href="/recursos" 
+            <Link
+              href="/recursos"
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
               Recursos
             </Link>
-            <Link 
-              href="#escenarios" 
+            <Link
+              href="/contactos"
+              className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
+            >
+              Contactos
+            </Link>
+            <Link
+              href="/escenarios"
               className="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200"
             >
               Escenarios
