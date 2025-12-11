@@ -1,6 +1,7 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import notificationService from '../../../services/notificationService';
-import connectDB from '../../../config/database';
+import notificationService from '../../../services/notificationService.d1';
 
 /**
  * GET /api/notifications/history
@@ -9,8 +10,6 @@ import connectDB from '../../../config/database';
  */
 export async function GET(request) {
   try {
-    await connectDB();
-    
     const { searchParams } = new URL(request.url);
     
     const userId = searchParams.get('userId');

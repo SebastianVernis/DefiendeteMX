@@ -1,6 +1,8 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import { connectDB } from '../../../config/database';
-import User from '../../../models/User';
+import { UserDB } from '../../../lib/db';
+import bcrypt from 'bcrypt';
 import { generateAccessToken, verifyRefreshToken } from '../../../lib/auth/jwt';
 import { 
   getRefreshTokenFromCookies, 
@@ -14,8 +16,6 @@ import {
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
     // Get refresh token from cookies
     const refreshToken = getRefreshTokenFromCookies(request);
 
@@ -47,7 +47,7 @@ export async function POST(request) {
     }
 
     // Get user from database
-    const user = await User.findById(decoded.userId).select('-password');
+    const user = await UserDB.findById(decoded.userId);
 
     if (!user) {
       const response = NextResponse.json(
@@ -88,7 +88,32 @@ export async function POST(request) {
     }
 
     // Verify refresh token exists in user's tokens
-    if (!user.hasValidRefreshToken(refreshToken)) {
+    let tokenFound = false;
+    const refreshTokens = user.refreshTokens || [];
+    const validTokens = [];
+    const now = new Date();
+
+    for (const tokenData of refreshTokens) {
+      // Check if token is expired
+      if (new Date(tokenData.expiresAt) <= now) {
+        continue; // Skip expired tokens
+      }
+      
+      // Check if this is the token we're looking for
+      try {
+        const isMatch = await bcrypt.compare(refreshToken, tokenData.token);
+        if (isMatch) {
+          tokenFound = true;
+        }
+      } catch (err) {
+        // Skip invalid tokens
+        continue;
+      }
+      
+      validTokens.push(tokenData);
+    }
+
+    if (!tokenFound) {
       const response = NextResponse.json(
         {
           success: false,
@@ -100,12 +125,14 @@ export async function POST(request) {
       return response;
     }
 
-    // Clean expired tokens
-    await user.cleanExpiredRefreshTokens();
+    // Update user with only valid tokens if any expired were removed
+    if (validTokens.length !== refreshTokens.length) {
+      await UserDB.update(user.id, { refreshTokens: validTokens });
+    }
 
     // Generate new access token
     const accessToken = generateAccessToken({
-      userId: user._id.toString(),
+      userId: user.id,
       email: user.email,
       role: user.role
     });

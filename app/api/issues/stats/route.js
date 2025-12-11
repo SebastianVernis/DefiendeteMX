@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/app/config/database';
-import { getUserIssueStats } from '@/app/issues/services/issueService';
+import { getUserIssueStats } from '@/app/issues/services/issueService.d1';
 
 /**
  * GET /api/issues/stats
@@ -9,8 +8,6 @@ import { getUserIssueStats } from '@/app/issues/services/issueService';
  */
 export async function GET(request) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
 

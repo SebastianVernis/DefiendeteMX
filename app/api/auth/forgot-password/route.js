@@ -1,8 +1,9 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import { connectDB } from '../../../config/database';
-import User from '../../../models/User';
-import { validateEmail } from '../../../lib/auth/passwordValidator';
+import { UserDB } from '../../../lib/db';
 import crypto from 'crypto';
+import { validateEmail } from '../../../lib/auth/passwordValidator';
 
 /**
  * POST /api/auth/forgot-password
@@ -10,8 +11,6 @@ import crypto from 'crypto';
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
     const body = await request.json();
     const { email } = body;
 
@@ -38,7 +37,7 @@ export async function POST(request) {
     }
 
     // Find user
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await UserDB.findByEmail(email.toLowerCase());
 
     // Always return success to prevent email enumeration
     if (!user) {
@@ -59,9 +58,10 @@ export async function POST(request) {
       .digest('hex');
 
     // Set reset token and expiration (1 hour)
-    user.passwordResetToken = resetTokenHash;
-    user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-    await user.save();
+    await UserDB.update(user.id, {
+      resetPasswordToken: resetTokenHash,
+      resetPasswordExpires: new Date(Date.now() + 60 * 60 * 1000).toISOString()
+    });
 
     // In production, send email with reset link
     // For now, we'll just log it (in development)

@@ -1,8 +1,10 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import { connectDB } from '../../../config/database';
-import User from '../../../models/User';
+import { UserDB } from '../../../lib/db';
+import bcrypt from 'bcrypt';
 import { getRefreshTokenFromCookies, clearAuthCookies } from '../../../lib/auth/sessionManager';
-import { authenticate } from '../../../lib/middleware/authMiddleware';
+import { authenticate } from '../../../lib/middleware/authMiddleware.d1';
 
 /**
  * POST /api/auth/logout
@@ -10,8 +12,6 @@ import { authenticate } from '../../../lib/middleware/authMiddleware';
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
     // Get refresh token from cookies
     const refreshToken = getRefreshTokenFromCookies(request);
 
@@ -20,10 +20,7 @@ export async function POST(request) {
 
     if (authResult.authenticated && refreshToken) {
       // Remove refresh token from user
-      const user = await User.findById(authResult.userId);
-      if (user) {
-        await user.removeRefreshToken(refreshToken);
-      }
+      await UserDB.removeRefreshToken(authResult.userId, refreshToken);
     }
 
     // Create response
@@ -63,8 +60,6 @@ export async function POST(request) {
  */
 export async function DELETE(request) {
   try {
-    await connectDB();
-
     // Authenticate user
     const authResult = await authenticate(request);
 
@@ -79,10 +74,7 @@ export async function DELETE(request) {
     }
 
     // Remove all refresh tokens
-    const user = await User.findById(authResult.userId);
-    if (user) {
-      await user.removeAllRefreshTokens();
-    }
+    await UserDB.update(authResult.userId, { refreshTokens: [] });
 
     // Create response
     const response = NextResponse.json(

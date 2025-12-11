@@ -1,6 +1,7 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/app/config/database';
-import governmentApiService from '@/app/services/governmentApiService';
+import governmentApiService from '@/app/services/governmentApiService.d1';
 
 /**
  * GET /api/government/reports/:id
@@ -25,24 +26,22 @@ export async function GET(request, { params }) {
       );
     }
 
-    const result = await governmentApiService.getReportById(id, userId);
-
-    if (!result.success) {
-      const statusCode = result.error.includes('not found') ? 404 : 
-                        result.error.includes('Unauthorized') ? 403 : 400;
-      
+    const report = await governmentApiService.getReportById(id);
+    
+    // Verify user has access
+    if (report.userId !== userId) {
       return NextResponse.json(
         { 
           success: false,
-          error: result.error 
+          error: 'Unauthorized to access this report' 
         },
-        { status: statusCode }
+        { status: 403 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: result.data
+      data: report
     });
   } catch (error) {
     console.error('GET /api/government/reports/:id error:', error);
@@ -64,8 +63,6 @@ export async function GET(request, { params }) {
  */
 export async function PUT(request, { params }) {
   try {
-    await connectDB();
-
     const { id } = params;
     const body = await request.json();
 
@@ -79,25 +76,13 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const result = await governmentApiService.updateReport(id, body.userId, body);
-
-    if (!result.success) {
-      const statusCode = result.error.includes('not found') ? 404 : 
-                        result.error.includes('Unauthorized') ? 403 : 400;
-      
-      return NextResponse.json(
-        { 
-          success: false,
-          error: result.error 
-        },
-        { status: statusCode }
-      );
-    }
+    const { userId, ...updates } = body;
+    const updatedReport = await governmentApiService.updateReport(id, updates, userId);
 
     return NextResponse.json({
       success: true,
       message: 'Government report updated successfully',
-      data: result.data
+      data: updatedReport
     });
   } catch (error) {
     console.error('PUT /api/government/reports/:id error:', error);
@@ -119,8 +104,6 @@ export async function PUT(request, { params }) {
  */
 export async function DELETE(request, { params }) {
   try {
-    await connectDB();
-
     const { id } = params;
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');

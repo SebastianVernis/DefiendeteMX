@@ -1,8 +1,10 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import { connectDB } from '../../../config/database';
-import User from '../../../models/User';
-import { validatePassword } from '../../../lib/auth/passwordValidator';
+import { UserDB, getDB } from '../../../lib/db';
+import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import { validatePassword } from '../../../lib/auth/passwordValidator';
 
 /**
  * POST /api/auth/reset-password
@@ -10,8 +12,6 @@ import crypto from 'crypto';
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
     const body = await request.json();
     const { token, newPassword } = body;
 
@@ -46,12 +46,15 @@ export async function POST(request) {
       .digest('hex');
 
     // Find user with valid reset token
-    const user = await User.findOne({
-      passwordResetToken: resetTokenHash,
-      passwordResetExpires: { $gt: Date.now() }
-    }).select('+password');
+    const db = getDB();
+    const result = await db.prepare(`
+      SELECT * FROM users 
+      WHERE reset_password_token = ? 
+      AND reset_password_expires > datetime('now')
+      AND is_deleted = 0
+    `).bind(resetTokenHash).first();
 
-    if (!user) {
+    if (!result) {
       return NextResponse.json(
         {
           success: false,
@@ -61,8 +64,21 @@ export async function POST(request) {
       );
     }
 
+    // Get user with password for verification
+    const user = await UserDB.findByCredentials(result.email);
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Usuario no encontrado'
+        },
+        { status: 404 }
+      );
+    }
+
     // Check if new password is same as current
-    const isSamePassword = await user.comparePassword(newPassword);
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
     if (isSamePassword) {
       return NextResponse.json(
         {
@@ -73,15 +89,16 @@ export async function POST(request) {
       );
     }
 
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
     // Update password and clear reset token
-    user.password = newPassword;
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    
-    // Invalidate all refresh tokens for security
-    user.refreshTokens = [];
-    
-    await user.save();
+    await UserDB.update(user.id, {
+      password: hashedPassword,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+      refreshTokens: [] // Invalidate all refresh tokens for security
+    });
 
     return NextResponse.json(
       {

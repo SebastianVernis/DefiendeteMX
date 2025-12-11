@@ -1,6 +1,7 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
 import smsService from '../../../services/smsService';
-import connectDB from '../../../config/database';
 
 /**
  * POST /api/notifications/batch-sms
@@ -8,8 +9,6 @@ import connectDB from '../../../config/database';
  */
 export async function POST(request) {
   try {
-    await connectDB();
-    
     const body = await request.json();
     
     // Validate required fields

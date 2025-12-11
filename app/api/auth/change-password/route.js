@@ -1,6 +1,8 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import { connectDB } from '../../../config/database';
-import User from '../../../models/User';
+import { UserDB } from '../../../lib/db';
+import bcrypt from 'bcrypt';
 import { verifyAccessToken } from '../../../lib/auth/jwt';
 import { validatePassword } from '../../../lib/auth/passwordValidator';
 
@@ -10,8 +12,6 @@ import { validatePassword } from '../../../lib/auth/passwordValidator';
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
     // Get token from cookies
     const token = request.cookies.get('accessToken')?.value;
 
@@ -65,8 +65,7 @@ export async function POST(request) {
     }
 
     // Find user
-    const user = await User.findById(decoded.userId).select('+password');
-
+    const user = await UserDB.findById(decoded.userId);
     if (!user) {
       return NextResponse.json(
         {
@@ -77,8 +76,21 @@ export async function POST(request) {
       );
     }
 
+    // Get user with password for verification
+    const userWithPassword = await UserDB.findByCredentials(user.email);
+
+    if (!userWithPassword) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Usuario no encontrado'
+        },
+        { status: 404 }
+      );
+    }
+
     // Verify current password
-    const isPasswordValid = await user.comparePassword(currentPassword);
+    const isPasswordValid = await bcrypt.compare(currentPassword, userWithPassword.password);
 
     if (!isPasswordValid) {
       return NextResponse.json(
@@ -91,7 +103,7 @@ export async function POST(request) {
     }
 
     // Check if new password is same as current
-    const isSamePassword = await user.comparePassword(newPassword);
+    const isSamePassword = await bcrypt.compare(newPassword, userWithPassword.password);
     if (isSamePassword) {
       return NextResponse.json(
         {
@@ -102,9 +114,11 @@ export async function POST(request) {
       );
     }
 
-    // Update password
-    user.password = newPassword;
-    await user.save();
+    // Hash and update password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await UserDB.update(user.id, {
+      password: hashedPassword
+    });
 
     return NextResponse.json(
       {

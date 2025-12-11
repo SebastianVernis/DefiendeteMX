@@ -1,6 +1,7 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/app/config/database';
-import VoiceRecording from '@/app/models/VoiceRecording';
+import { VoiceRecordingDB, getDB } from '@/app/lib/db';
 import { validateAudioFile } from '@/app/issues/services/aiAnalysisService';
 
 /**
@@ -9,8 +10,6 @@ import { validateAudioFile } from '@/app/issues/services/aiAnalysisService';
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
     // Parse form data
     const formData = await request.formData();
     const audioFile = formData.get('audio');
@@ -58,14 +57,14 @@ export async function POST(request) {
 
     // Create recording document
     const recordingData = {
-      user: userId,
+      userId,
       filename: audioFile.name || `recording_${Date.now()}.webm`,
       duration: estimatedDuration,
       fileSize: audioFile.size,
       mimeType: audioFile.type,
       storageUrl: storageUrl,
       storageProvider: 'LOCAL',
-      recordedAt: new Date(),
+      recordedAt: new Date().toISOString(),
       analysisStatus: 'PENDING'
     };
 
@@ -80,7 +79,7 @@ export async function POST(request) {
 
     // Add issue reference if provided
     if (issueId) {
-      recordingData.issue = issueId;
+      recordingData.issueId = issueId;
     }
 
     // Add notes if provided
@@ -89,17 +88,29 @@ export async function POST(request) {
     }
 
     // Save to database
-    const recording = new VoiceRecording(recordingData);
-    await recording.save();
+    const recording = await VoiceRecordingDB.create(recordingData);
+
+    // Format duration and file size
+    const formatDuration = (seconds) => {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+    
+    const formatFileSize = (bytes) => {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1048576) return `${(bytes / 1024).toFixed(2)} KB`;
+      return `${(bytes / 1048576).toFixed(2)} MB`;
+    };
 
     // Return success response (without the large base64 data)
     const response = {
-      id: recording._id,
+      id: recording.id,
       filename: recording.filename,
       duration: recording.duration,
-      durationFormatted: recording.durationFormatted,
+      durationFormatted: formatDuration(recording.duration),
       fileSize: recording.fileSize,
-      fileSizeFormatted: recording.fileSizeFormatted,
+      fileSizeFormatted: formatFileSize(recording.fileSize),
       recordedAt: recording.recordedAt,
       analysisStatus: recording.analysisStatus,
       location: recording.location,
@@ -122,8 +133,6 @@ export async function POST(request) {
  */
 export async function GET(request) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
     const issueId = searchParams.get('issueId');
@@ -137,29 +146,39 @@ export async function GET(request) {
       );
     }
 
-    let query = { isDeleted: false };
+    let recordings = [];
 
     if (userId) {
-      query.user = userId;
+      const options = {
+        limit,
+        isEmergency: isEmergency !== null && isEmergency !== undefined ? isEmergency === 'true' : undefined
+      };
+      recordings = await VoiceRecordingDB.findByUser(userId, options);
+    } else if (issueId) {
+      // Get recordings by issue - would need to add this method to VoiceRecordingDB
+      const db = getDB();
+      const { results } = await db.prepare(`
+        SELECT * FROM voice_recordings 
+        WHERE issue_id = ? AND is_deleted = 0
+        ORDER BY recorded_at DESC
+        LIMIT ?
+      `).bind(issueId, limit).all();
+      
+      recordings = results.map(row => ({
+        ...transformVoiceRecording(row),
+        storageUrl: undefined // Exclude large data
+      }));
     }
 
-    if (issueId) {
-      query.issue = issueId;
-    }
-
-    if (isEmergency !== null && isEmergency !== undefined) {
-      query.isEmergency = isEmergency === 'true';
-    }
-
-    const recordings = await VoiceRecording.find(query)
-      .sort({ recordedAt: -1 })
-      .limit(limit)
-      .select('-storageUrl') // Exclude large base64 data
-      .lean();
+    // Remove storageUrl from recordings to avoid sending large data
+    const sanitizedRecordings = recordings.map(rec => {
+      const { storageUrl, ...recordingWithoutUrl } = rec;
+      return recordingWithoutUrl;
+    });
 
     return NextResponse.json({
-      recordings,
-      count: recordings.length
+      recordings: sanitizedRecordings,
+      count: sanitizedRecordings.length
     });
   } catch (error) {
     console.error('Get recordings error:', error);
@@ -168,4 +187,40 @@ export async function GET(request) {
       { status: 500 }
     );
   }
+}
+
+// Helper function to transform voice recording from D1
+function transformVoiceRecording(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    _id: row.id,
+    user: row.user_id,
+    userId: row.user_id,
+    issue: row.issue_id,
+    issueId: row.issue_id,
+    filename: row.filename,
+    duration: row.duration,
+    fileSize: row.file_size,
+    mimeType: row.mime_type,
+    storageUrl: row.storage_url,
+    storageProvider: row.storage_provider,
+    recordedAt: row.recorded_at,
+    location: JSON.parse(row.location || '{}'),
+    transcription: JSON.parse(row.transcription || '{}'),
+    emotionAnalysis: JSON.parse(row.emotion_analysis || '{}'),
+    analysisStatus: row.analysis_status,
+    analysisError: row.analysis_error,
+    isEmergency: !!row.is_emergency,
+    emergencyKeywords: JSON.parse(row.emergency_keywords || '[]'),
+    isEncrypted: !!row.is_encrypted,
+    expiresAt: row.expires_at,
+    autoDeleteAfterDays: row.auto_delete_after_days,
+    tags: JSON.parse(row.tags || '[]'),
+    notes: row.notes,
+    isDeleted: !!row.is_deleted,
+    deletedAt: row.deleted_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
 }

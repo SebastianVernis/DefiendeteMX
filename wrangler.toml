@@ -2,6 +2,12 @@ name = "defiendete-mx"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = ".next"
 
+# Cloudflare D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "defiendete-mx-db"
+database_id = "" # Will be set after creating the database
+
 # Cloudflare Pages configuration
 [build]
 command = "npm run build"
@@ -12,9 +18,9 @@ NODE_VERSION = "18"
 NPM_VERSION = "9"
 
 # Environment variables (set these in Cloudflare dashboard)
-# MONGODB_URI
 # JWT_SECRET
 # JWT_REFRESH_SECRET
+# OPENAI_API_KEY (for AI features)
 
 # Custom headers for security and performance
 [[headers]]

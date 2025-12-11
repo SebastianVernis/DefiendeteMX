@@ -1,6 +1,8 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import { connectDB } from '../../../config/database';
-import User from '../../../models/User';
+import { UserDB } from '../../../lib/db';
+import bcrypt from 'bcrypt';
 import { generateTokens } from '../../../lib/auth/jwt';
 import { setAuthCookies } from '../../../lib/auth/sessionManager';
 import { 
@@ -17,8 +19,6 @@ import {
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
     const body = await request.json();
     const { email, password, fullName, phone } = body;
 
@@ -85,10 +85,7 @@ export async function POST(request) {
     }
 
     // Check if user already exists
-    const existingUser = await User.findOne({ 
-      email: email.toLowerCase(),
-      isDeleted: false 
-    });
+    const existingUser = await UserDB.findByEmail(email.toLowerCase());
 
     if (existingUser) {
       return NextResponse.json(
@@ -104,18 +101,19 @@ export async function POST(request) {
     const sanitizedFullName = sanitizeInput(fullName);
     const sanitizedPhone = phone ? sanitizeInput(phone) : undefined;
 
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create new user
-    const user = new User({
+    const user = await UserDB.create({
       email: email.toLowerCase(),
-      password, // Will be hashed by pre-save hook
+      password: hashedPassword,
       fullName: sanitizedFullName,
       phone: sanitizedPhone,
       role: 'USER',
       isActive: true,
       isVerified: false
     });
-
-    await user.save();
 
     // Generate tokens
     const { accessToken, refreshToken } = generateTokens(user);
@@ -130,12 +128,16 @@ export async function POST(request) {
                       request.headers.get('x-real-ip') || 
                       'Unknown';
 
+    // Hash refresh token before storing
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+
     // Save refresh token to user
-    await user.addRefreshToken(refreshToken, refreshTokenExpires, userAgent, ipAddress);
+    await UserDB.addRefreshToken(user.id, hashedRefreshToken, refreshTokenExpires.toISOString(), userAgent, ipAddress);
 
     // Update last login
-    user.lastLogin = new Date();
-    await user.save();
+    await UserDB.update(user.id, {
+      lastLogin: new Date().toISOString()
+    });
 
     // Create response
     const response = NextResponse.json(
@@ -143,7 +145,7 @@ export async function POST(request) {
         success: true,
         message: 'Usuario registrado exitosamente',
         user: {
-          id: user._id,
+          id: user.id,
           email: user.email,
           fullName: user.fullName,
           role: user.role,
@@ -162,14 +164,13 @@ export async function POST(request) {
   } catch (error) {
     console.error('Registration error:', error);
     
-    // Handle mongoose validation errors
-    if (error.name === 'ValidationError') {
-      const errors = Object.values(error.errors).map(err => err.message);
+    // Handle validation errors
+    if (error.message && error.message.includes('Validation failed')) {
       return NextResponse.json(
         {
           success: false,
           error: 'Error de validación',
-          errors
+          errors: [error.message]
         },
         { status: 400 }
       );

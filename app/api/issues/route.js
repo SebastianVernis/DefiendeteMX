@@ -1,6 +1,7 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/app/config/database';
-import { createIssue, getUserIssues } from '@/app/issues/services/issueService';
+import { createIssue, getUserIssues } from '@/app/issues/services/issueService.d1';
 
 /**
  * GET /api/issues
@@ -9,8 +10,6 @@ import { createIssue, getUserIssues } from '@/app/issues/services/issueService';
  */
 export async function GET(request) {
   try {
-    await connectDB();
-
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
 
@@ -55,8 +54,6 @@ export async function GET(request) {
  */
 export async function POST(request) {
   try {
-    await connectDB();
-
     const body = await request.json();
 
     // Validate required fields

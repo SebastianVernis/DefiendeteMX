@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/app/config/database';
-import { addNoteToIssue } from '@/app/issues/services/issueService';
+import { addNoteToIssue } from '@/app/issues/services/issueService.d1';
 
 /**
  * POST /api/issues/[id]/notes
@@ -9,8 +8,6 @@ import { addNoteToIssue } from '@/app/issues/services/issueService';
  */
 export async function POST(request, { params }) {
   try {
-    await connectDB();
-
     const { id } = params;
     const body = await request.json();
 

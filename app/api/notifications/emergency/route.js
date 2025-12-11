@@ -1,6 +1,7 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
-import notificationService from '../../../services/notificationService';
-import connectDB from '../../../config/database';
+import notificationService from '../../../services/notificationService.d1';
 
 /**
  * POST /api/notifications/emergency
@@ -8,8 +9,6 @@ import connectDB from '../../../config/database';
  */
 export async function POST(request) {
   try {
-    await connectDB();
-    
     const body = await request.json();
     
     // Validate required fields
