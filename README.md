@@ -97,9 +97,9 @@ Deployed on Cloudflare Pages with automatic HTTPS and global CDN.
  │   └─ sw.js               # Service Worker
  ├─ tailwind.config.js       # Config Tailwind
  ├─ next.config.js           # Config Next.js
- ├─ REDESIGN_SUMMARY.md      # Resumen del rediseño
- ├─ DESIGN_SYSTEM.md         # Sistema de diseño
- └─ DEVELOPMENT_GUIDE.md     # Guía de desarrollo
+ ├─ docs/REDESIGN_SUMMARY.md      # Resumen del rediseño
+ ├─ docs/DESIGN_SYSTEM.md         # Sistema de diseño
+ └─ docs/DEVELOPMENT_GUIDE.md     # Guía de desarrollo
 ```
 
 ---
@@ -158,7 +158,7 @@ npm run deploy   # Deploy a Cloudflare Pages
 </Badge>
 ```
 
-Para más información, consulta [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md)
+Para más información, consulta [`docs/DESIGN_SYSTEM.md`](./docs/DESIGN_SYSTEM.md)
 
 ---
 
@@ -196,29 +196,29 @@ NEXT_PUBLIC_API_URL=https://api.example.com
 
 ## 📚 Documentación
 
-**📖 Índice Completo:** [`DOCUMENTATION_INDEX.md`](./DOCUMENTATION_INDEX.md) - Índice de toda la documentación (31+ documentos)
+**📖 Índice Completo:** [`docs/DOCUMENTATION_INDEX.md`](./docs/DOCUMENTATION_INDEX.md) - Índice de toda la documentación (31+ documentos)
 
 ### 🚀 Documentos Principales
 - [`README.md`](./README.md) - Este archivo (información general)
-- [`PROJECT_STATUS_SUMMARY.md`](./PROJECT_STATUS_SUMMARY.md) - Resumen ejecutivo del proyecto
-- [`ISSUES_STATUS.md`](./ISSUES_STATUS.md) - Estado de issues completados
+- [`docs/PROJECT_STATUS_SUMMARY.md`](./docs/PROJECT_STATUS_SUMMARY.md) - Resumen ejecutivo del proyecto
+- [`docs/ISSUES_STATUS.md`](./docs/ISSUES_STATUS.md) - Estado de issues completados
 - [`CHANGELOG.md`](./CHANGELOG.md) - Historial de cambios detallado
 
 ### 💻 Para Desarrolladores
-- [`QUICK_START_GUIDE.md`](./QUICK_START_GUIDE.md) - Inicio rápido general
-- [`DEVELOPMENT_GUIDE.md`](./DEVELOPMENT_GUIDE.md) - Guía de desarrollo
-- [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md) - Documentación completa de API
-- [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) - Sistema de diseño
+- [`docs/QUICK_START_GUIDE.md`](./docs/QUICK_START_GUIDE.md) - Inicio rápido general
+- [`docs/DEVELOPMENT_GUIDE.md`](./docs/DEVELOPMENT_GUIDE.md) - Guía de desarrollo
+- [`docs/API_DOCUMENTATION.md`](./docs/API_DOCUMENTATION.md) - Documentación completa de API
+- [`docs/DESIGN_SYSTEM.md`](./docs/DESIGN_SYSTEM.md) - Sistema de diseño
 
 ### 🔐 Backend & Seguridad
-- [`AUTHENTICATION_GUIDE.md`](./AUTHENTICATION_GUIDE.md) - Guía de autenticación
-- [`ISSUE_MODEL_DOCUMENTATION.md`](./ISSUE_MODEL_DOCUMENTATION.md) - Modelo de datos
-- [`SMS_NOTIFICATION_GUIDE.md`](./SMS_NOTIFICATION_GUIDE.md) - Sistema de notificaciones
-- [`VOICE_RECORDER_DOCUMENTATION.md`](./VOICE_RECORDER_DOCUMENTATION.md) - Grabador de voz
+- [`docs/AUTHENTICATION_GUIDE.md`](./docs/AUTHENTICATION_GUIDE.md) - Guía de autenticación
+- [`docs/ISSUE_MODEL_DOCUMENTATION.md`](./docs/ISSUE_MODEL_DOCUMENTATION.md) - Modelo de datos
+- [`docs/SMS_NOTIFICATION_GUIDE.md`](./docs/SMS_NOTIFICATION_GUIDE.md) - Sistema de notificaciones
+- [`docs/VOICE_RECORDER_DOCUMENTATION.md`](./docs/VOICE_RECORDER_DOCUMENTATION.md) - Grabador de voz
 
 ### 🚀 Deployment
-- [`DEPLOYMENT_INSTRUCTIONS.md`](./DEPLOYMENT_INSTRUCTIONS.md) - Instrucciones de deployment
-- [`DEPLOYMENT_CHECKLIST.md`](./DEPLOYMENT_CHECKLIST.md) - Checklist de deployment
+- [`docs/DEPLOYMENT_INSTRUCTIONS.md`](./docs/DEPLOYMENT_INSTRUCTIONS.md) - Instrucciones de deployment
+- [`docs/DEPLOYMENT_CHECKLIST.md`](./docs/DEPLOYMENT_CHECKLIST.md) - Checklist de deployment
 
 ---
 
@@ -238,7 +238,7 @@ NEXT_PUBLIC_API_URL=https://api.example.com
 - 📚 15+ documentos técnicos
 - 🚀 25+ endpoints API
 
-Ver detalles completos en [`ISSUES_STATUS.md`](./ISSUES_STATUS.md)
+Ver detalles completos en [`docs/ISSUES_STATUS.md`](./docs/ISSUES_STATUS.md)
 
 ---
 
