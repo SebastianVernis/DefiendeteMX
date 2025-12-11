@@ -14,6 +14,9 @@ const customJestConfig = {
     '**/__tests__/**/*.[jt]s?(x)',
     '**/?(*.)+(spec|test).[jt]s?(x)',
   ],
+  transformIgnorePatterns: [
+    'node_modules/(?!(bson|mongodb|mongoose)/)',
+  ],
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
     '!app/**/*.d.ts',

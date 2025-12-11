@@ -8,6 +8,25 @@ process.env.JWT_EXPIRES_IN = '15m';
 process.env.JWT_REFRESH_EXPIRES_IN = '7d';
 process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/defiendete-mx-test';
 
+// Mock mongoose for tests
+jest.mock('mongoose', () => {
+  const actual = jest.requireActual('mongoose');
+  return {
+    ...actual,
+    connect: jest.fn().mockResolvedValue({
+      connections: [{ readyState: 1, name: 'test-db' }]
+    }),
+    disconnect: jest.fn().mockResolvedValue(undefined),
+    connection: {
+      readyState: 1,
+      on: jest.fn(),
+      once: jest.fn(),
+    },
+    models: {},
+    model: jest.fn(),
+  };
+});
+
 // Suppress console errors during tests (optional)
 // global.console = {
 //   ...console,
