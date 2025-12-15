@@ -1,8 +1,7 @@
-
 import { NextResponse } from 'next/server';
-import User from '../../../models/User';
 import dbConnect from '../../../lib/mongodb';
-import crypto from 'crypto';
+import User from '../../../models/User';
+import { randomBytes } from 'crypto';
 import { validateEmail } from '../../../lib/auth/passwordValidator';
 
 /**

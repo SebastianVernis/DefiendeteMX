@@ -13,6 +13,8 @@ import { validateEmail } from '../../../lib/auth/passwordValidator';
  */
 export async function POST(request) {
   try {
+    await dbConnect();
+    
     const body = await request.json();
     const { email, password } = body;
 
@@ -40,7 +42,7 @@ export async function POST(request) {
     }
 
     // Find user by email (including password field)
-    const user = await UserDB.findByCredentials(email);
+    const user = await User.findOne({ email: email.toLowerCase(), isActive: true, isDeleted: false }).select('+password');
 
     if (!user) {
       return NextResponse.json(
@@ -67,8 +69,8 @@ export async function POST(request) {
       );
     }
 
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Verify password using User model method
+    const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
       // Increment login attempts
@@ -76,11 +78,11 @@ export async function POST(request) {
       const maxLoginAttempts = 5;
       const lockTime = 2 * 60 * 60 * 1000; // 2 hours
       
-      let updates = { loginAttempts: newAttempts };
+      user.loginAttempts = newAttempts;
       
       if (newAttempts >= maxLoginAttempts) {
-        updates.lockUntil = new Date(Date.now() + lockTime).toISOString();
-        await UserDB.update(user.id, updates);
+        user.lockUntil = new Date(Date.now() + lockTime);
+        await user.save();
         return NextResponse.json(
           {
             success: false,
@@ -90,7 +92,7 @@ export async function POST(request) {
         );
       }
       
-      await UserDB.update(user.id, updates);
+      await user.save();
 
       return NextResponse.json(
         {
@@ -103,17 +105,10 @@ export async function POST(request) {
     }
 
     // Reset login attempts on successful login
-    if (user.loginAttempts > 0) {
-      await UserDB.update(user.id, {
-        loginAttempts: 0,
-        lockUntil: null,
-        lastLogin: new Date().toISOString()
-      });
-    } else {
-      await UserDB.update(user.id, {
-        lastLogin: new Date().toISOString()
-      });
-    }
+    user.loginAttempts = 0;
+    user.lockUntil = null;
+    user.lastLogin = new Date();
+    await user.save();
 
     // Generate tokens
     const { accessToken, refreshToken } = generateTokens(user);
@@ -128,14 +123,11 @@ export async function POST(request) {
                       request.headers.get('x-real-ip') || 
                       'Unknown';
 
-    // Hash refresh token before storing
-    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-
-    // Save refresh token to user
-    await UserDB.addRefreshToken(user.id, hashedRefreshToken, refreshTokenExpires.toISOString(), userAgent, ipAddress);
+    // Save refresh token to user using model method
+    await user.addRefreshToken(refreshToken, refreshTokenExpires, userAgent, ipAddress);
 
     // Get user without password
-    const userWithoutPassword = await UserDB.findById(user.id);
+    const userWithoutPassword = await User.findById(user._id);
 
     // Create response
     const response = NextResponse.json(
@@ -143,7 +135,7 @@ export async function POST(request) {
         success: true,
         message: 'Inicio de sesión exitoso',
         user: {
-          id: userWithoutPassword.id,
+          id: userWithoutPassword._id,
           email: userWithoutPassword.email,
           fullName: userWithoutPassword.fullName,
           role: userWithoutPassword.role,

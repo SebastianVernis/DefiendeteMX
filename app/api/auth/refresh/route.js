@@ -1,7 +1,6 @@
-
 import { NextResponse } from 'next/server';
-import User from '../../../models/User';
 import dbConnect from '../../../lib/mongodb';
+import User from '../../../models/User';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken, verifyRefreshToken } from '../../../lib/auth/jwt';
 import { 

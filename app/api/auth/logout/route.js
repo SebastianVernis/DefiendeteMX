@@ -1,10 +1,9 @@
-
 import { NextResponse } from 'next/server';
-import User from '../../../models/User';
 import dbConnect from '../../../lib/mongodb';
+import User from '../../../models/User';
 import bcrypt from 'bcryptjs';
 import { getRefreshTokenFromCookies, clearAuthCookies } from '../../../lib/auth/sessionManager';
-import { authenticate } from '../../../lib/middleware/authMiddleware.d1';
+import { authenticate } from '../../../lib/middleware/authMiddleware';
 
 /**
  * POST /api/auth/logout

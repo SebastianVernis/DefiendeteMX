@@ -28,59 +28,73 @@ export default function Hero() {
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-medium mb-8 animate-fadeIn">
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            Información Legal Verificada
+          <div className="inline-flex items-center gap-2 bg-red-500/30 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm font-medium mb-8 animate-fadeIn border border-red-300/30">
+            <span className="w-2 h-2 bg-red-300 rounded-full animate-pulse" />
+            Cuando la Autoridad No Es Aliada
           </div>
 
           {/* Main Heading */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white mb-6 animate-fadeIn delay-100 font-display leading-tight">
-            Protege tus
-            <span className="block bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text text-transparent">
-              Derechos Legales
+            Defiéndete
+            <span className="block bg-gradient-to-r from-yellow-300 via-orange-300 to-red-300 bg-clip-text text-transparent">
+              Conoce tus Derechos
             </span>
           </h1>
 
           {/* Subheading */}
           <p className="text-xl sm:text-2xl text-white/90 mb-12 max-w-2xl mx-auto animate-fadeIn delay-200 leading-relaxed">
-            Información legal verificada para situaciones de detención en México. 
-            Conoce tus derechos y actúa con confianza.
+            Plataforma de asesoría legal y gestión de emergencias. 
+            <strong className="block mt-2">Documenta. Protege. Actúa.</strong>
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fadeIn delay-300">
+            <Button
+              variant="sos"
+              size="lg"
+              icon="🚨"
+              onClick={() => window.location.href = 'tel:911'}
+              className="shadow-2xl"
+            >
+              Emergencia 911
+            </Button>
             <Button
               variant="primary"
               size="lg"
               onClick={scrollToScenarios}
               className="bg-white text-purple-600 hover:bg-gray-100 shadow-2xl"
             >
-              <span className="text-xl mr-2">📚</span>
-              Ver Escenarios
+              <span className="text-xl mr-2">🛡️</span>
+              Conoce tus Derechos
             </Button>
             <Button
-              variant="sos"
+              variant="secondary"
               size="lg"
-              icon="🚨"
-              onClick={() => window.location.href = 'tel:911'}
+              onClick={() => window.location.href = '/grabador'}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 shadow-2xl backdrop-blur-sm"
             >
-              Emergencia 911
+              <span className="text-xl mr-2">🎙️</span>
+              Grabar Evidencia
             </Button>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto animate-fadeIn delay-400">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-2">3</div>
-              <div className="text-sm text-white/80">Escenarios Legales</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-3xl mx-auto animate-fadeIn delay-400">
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <div className="text-4xl font-bold text-white mb-2">🛡️</div>
+              <div className="text-sm text-white/80 font-medium">Protección Legal</div>
             </div>
-            <div className="text-center">
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <div className="text-4xl font-bold text-white mb-2">🎙️</div>
+              <div className="text-sm text-white/80 font-medium">Grabación de Evidencia</div>
+            </div>
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <div className="text-4xl font-bold text-white mb-2">📱</div>
+              <div className="text-sm text-white/80 font-medium">Alertas SOS</div>
+            </div>
+            <div className="text-center bg-white/10 backdrop-blur-sm rounded-lg p-4">
               <div className="text-4xl font-bold text-white mb-2">24/7</div>
-              <div className="text-sm text-white/80">Disponible</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-2">100%</div>
-              <div className="text-sm text-white/80">Verificado</div>
+              <div className="text-sm text-white/80 font-medium">Disponible</div>
             </div>
           </div>
         </div>

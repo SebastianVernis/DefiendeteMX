@@ -1,7 +1,5 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
-import notificationService from '../../../../services/notificationService.d1';
+import notificationService from '../../../../services/notificationService';
 import smsService from '../../../../services/smsService';
 
 /**
@@ -10,6 +8,8 @@ import smsService from '../../../../services/smsService';
  */
 export async function GET(request, { params }) {
   try {
+    
+    await dbConnect();
     await connectDB();
     
     const { id } = params;
@@ -89,6 +89,8 @@ export async function GET(request, { params }) {
  */
 export async function PATCH(request, { params }) {
   try {
+    
+    await dbConnect();
     const { id } = params;
     const body = await request.json();
     const { action } = body;
