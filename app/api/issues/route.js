@@ -1,7 +1,7 @@
 export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
-import { createIssue, getUserIssues } from '@/app/issues/services/issueService.d1';
+import { createIssue, getUserIssues } from '@/app/issues/services/issueService';
 
 /**
  * GET /api/issues

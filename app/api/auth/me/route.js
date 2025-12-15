@@ -1,7 +1,7 @@
-export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
-import { UserDB } from '../../../lib/db';
+import User from '../../../models/User';
+import dbConnect from '../../../lib/mongodb';
 import { authenticate } from '../../../lib/middleware/authMiddleware.d1';
 
 /**

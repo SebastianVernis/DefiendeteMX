@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getIssueById, updateIssue, deleteIssue } from '@/app/issues/services/issueService.d1';
+import { getIssueById, updateIssue, deleteIssue } from '@/app/issues/services/issueService';
 
 /**
  * GET /api/issues/[id]

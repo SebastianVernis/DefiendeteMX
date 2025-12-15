@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "validate:db": "node scripts/database-validation.mjs",
+    "validate:all": "npm run validate:db && npm run test:coverage"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

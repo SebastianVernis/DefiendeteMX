@@ -1,7 +1,6 @@
-export const runtime = 'edge';
-
 import { NextResponse } from 'next/server';
-import { VoiceRecordingDB, getDB } from '@/app/lib/db';
+import VoiceRecording from '@/app/models/VoiceRecording';
+import dbConnect from '@/app/lib/mongodb';
 import { validateAudioFile } from '@/app/issues/services/aiAnalysisService';
 
 /**
