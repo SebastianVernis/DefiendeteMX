@@ -1,16 +1,40 @@
 'use client';
 
+import { useState } from 'react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
+import FavoriteButton from '../components/ui/FavoriteButton';
+import { downloadPDF } from '../lib/pdf/pdfGenerator';
 
 /**
  * Resources Page
  * Visual gallery of downloadable legal resources
  */
 export default function RecursosPage() {
+  const [downloading, setDownloading] = useState(null);
+
+  const handleDownload = (resourceId, title) => {
+    setDownloading(resourceId);
+    try {
+      const filename = `${title.toLowerCase().replace(/\s+/g, '-')}.pdf`;
+      const success = downloadPDF(resourceId, filename);
+      if (success) {
+        // Show success message (optional)
+        setTimeout(() => setDownloading(null), 1000);
+      } else {
+        alert('Error al generar el PDF. Por favor, intenta nuevamente.');
+        setDownloading(null);
+      }
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      alert('Error al descargar el archivo. Por favor, intenta nuevamente.');
+      setDownloading(null);
+    }
+  };
+
   const resources = [
     {
       id: 1,
@@ -122,10 +146,11 @@ export default function RecursosPage() {
 
                   {/* Content */}
                   <div className="mb-4">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center justify-between gap-2 mb-2">
                       <h3 className="text-xl font-bold text-gray-900">
                         {resource.title}
                       </h3>
+                      <FavoriteButton type="resources" item={resource} size="sm" />
                     </div>
                     <Badge variant="primary" size="sm" className="mb-3">
                       {resource.category}
@@ -152,10 +177,20 @@ export default function RecursosPage() {
                     variant="primary"
                     size="sm"
                     fullWidth
-                    onClick={() => alert('Función de descarga próximamente')}
+                    onClick={() => handleDownload(resource.id, resource.title)}
+                    disabled={downloading === resource.id}
                   >
-                    <span className="text-lg mr-1">⬇️</span>
-                    Descargar PDF
+                    {downloading === resource.id ? (
+                      <>
+                        <span className="text-lg mr-1">⏳</span>
+                        Generando...
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-lg mr-1">⬇️</span>
+                        Descargar PDF
+                      </>
+                    )}
                   </Button>
                 </Card>
               ))}

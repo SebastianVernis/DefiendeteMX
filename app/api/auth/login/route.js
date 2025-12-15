@@ -1,6 +1,8 @@
+
 import { NextResponse } from 'next/server';
-import dbConnect from '../../../lib/mongodb';
 import User from '../../../models/User';
+import dbConnect from '../../../lib/mongodb';
+import bcrypt from 'bcryptjs';
 import { generateTokens } from '../../../lib/auth/jwt';
 import { setAuthCookies } from '../../../lib/auth/sessionManager';
 import { validateEmail } from '../../../lib/auth/passwordValidator';
