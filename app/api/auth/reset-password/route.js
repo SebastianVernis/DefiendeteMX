@@ -46,27 +46,14 @@ export async function POST(request) {
       .update(token)
       .digest('hex');
 
+    // Connect to database
+    await dbConnect();
+
     // Find user with valid reset token
-    const db = getDB();
-    const result = await db.prepare(`
-      SELECT * FROM users 
-      WHERE reset_password_token = ? 
-      AND reset_password_expires > datetime('now')
-      AND is_deleted = 0
-    `).bind(resetTokenHash).first();
-
-    if (!result) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Token inválido o expirado'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Get user with password for verification
-    const user = await UserDB.findByCredentials(result.email);
+    const user = await User.findOne({
+      resetPasswordToken: resetTokenHash,
+      resetPasswordExpires: { $gt: Date.now() }
+    }).select('+password');
 
     if (!user) {
       return NextResponse.json(

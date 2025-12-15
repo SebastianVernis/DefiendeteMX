@@ -10,9 +10,15 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(bson|mongodb)/)',
+  ],
   testMatch: [
     '**/__tests__/**/*.[jt]s?(x)',
     '**/?(*.)+(spec|test).[jt]s?(x)',
+  ],
+  transformIgnorePatterns: [
+    'node_modules/(?!(bson|mongodb|mongoose)/)',
   ],
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',

@@ -1,7 +1,8 @@
+
 import { NextResponse } from 'next/server';
-import dbConnect from '../../../lib/mongodb';
 import User from '../../../models/User';
-import { authenticate } from '../../../lib/middleware/authMiddleware';
+import dbConnect from '../../../lib/mongodb';
+import { authenticate } from '../../../lib/middleware/authMiddleware.d1';
 
 /**
  * GET /api/auth/me
