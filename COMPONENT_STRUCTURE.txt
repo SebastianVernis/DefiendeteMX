@@ -1,0 +1,28 @@
+app
+├── components
+│   ├── features
+│   │   ├── FeaturesSection.js
+│   │   ├── Hero.js
+│   │   ├── ScenarioCard.js
+│   │   └── ScenariosSection.js
+│   ├── layout
+│   │   ├── Footer.js
+│   │   └── Header.js
+│   └── ui
+│       ├── Badge.js
+│       ├── Button.js
+│       └── Card.js
+├── data
+│   └── scenarios.js
+├── error.js
+├── globals.css
+├── layout.js
+├── loading.js
+├── not-found.js
+├── offline
+│   └── page.js
+├── page.js
+└── recursos
+    └── page.js
+
+8 directories, 18 files
